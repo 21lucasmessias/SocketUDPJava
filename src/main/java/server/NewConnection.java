@@ -4,12 +4,15 @@ import java.io.*;
 import java.net.Socket;
 
 public class NewConnection extends Thread {
-    private Socket socket;
+    private final Socket socket;
     private BufferedReader is;
     private PrintWriter os;
+    private FortuneDB fortuneDB;
 
-    public NewConnection(Socket s) {
+    public NewConnection(Socket s, FortuneDB fortuneDB) {
         this.socket = s;
+        this.fortuneDB = fortuneDB;
+
         try {
             is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             os = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
@@ -23,7 +26,7 @@ public class NewConnection extends Thread {
 
     public void run() {
         try {
-            os.println("Bem vindo ao servidor. (Digite fim para encerrar a conexao)");
+            os.println("Bem vindo ao servidor fortune. (Digite fim para encerrar a conexao)");
             os.flush();
 
             int cont = 0;
@@ -32,7 +35,30 @@ public class NewConnection extends Thread {
             System.out.println("Mesangem recebida: " + str);
 
             while (!str.toUpperCase().equals("FIM")) {
-                os.println("Oi, voce escreveu " + str + " e esta é a " + (cont++) + " resposta que estou mandando.");
+                try {
+                    if(str.startsWith("GET-FORTUNE")) {
+                        os.println(fortuneDB.getRandomFortune());
+                    } else if (str.startsWith("SET-FORTUNE")) {
+                        final int firstSeparator = str.indexOf("\\n");
+                        final int lastSeparator = str.lastIndexOf("\\n");
+
+                        if(firstSeparator == -1 || lastSeparator == -1) {
+                            throw new Exception("Separadores não encontrados");
+                        }
+
+                        final int fortuneIndex = fortuneDB.getRandomFortuneIndex();
+                        final String newFortune = str.substring(firstSeparator + 2, lastSeparator);
+                        final String oldFortune = fortuneDB.updateFortune(fortuneIndex, newFortune);
+
+                        os.println(oldFortune + " foi sobreescrito por: " + newFortune);
+                    } else {
+                        os.println("Mensagem não aceita.");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    os.println("Houve um problema ao interpretar sua mensagem");
+                }
+
                 os.flush();
                 str = is.readLine();
 

@@ -10,9 +10,12 @@ public class Server {
         try {
             ServerSocket s = new ServerSocket(porta);
             System.out.println("Servidor de cadastro iniciado na porta " + s);
+
+            FortuneDB fortuneDb = new FortuneDB();
+
             while (true) {
                 Socket socket = s.accept();
-                new NewConnection(socket);
+                new NewConnection(socket, fortuneDb);
             }
         } catch (Exception e) {
             e.printStackTrace();
