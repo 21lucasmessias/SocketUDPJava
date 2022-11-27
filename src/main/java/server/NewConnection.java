@@ -23,20 +23,20 @@ public class NewConnection extends Thread {
 
     public void run() {
         try {
-            os.println("Bem vindo ao servidor. (Digite fim para encerrar a conexao)");
+            os.println("Bem vindo ao servidor echo. (Digite fim para encerrar a conexao)");
             os.flush();
 
             int cont = 0;
             String str = is.readLine();
 
-            System.out.println("Mesangem recebida: " + str);
+            System.out.println("Mensagem recebida: " + str);
 
             while (!str.toUpperCase().equals("FIM")) {
-                os.println("Oi, voce escreveu " + str + " e esta é a " + (cont++) + " resposta que estou mandando.");
+                os.println(str);
                 os.flush();
                 str = is.readLine();
 
-                System.out.println("Mesangem recebida: " + str);
+                System.out.println("Mensagem recebida: " + str);
             }
 
             System.out.println("Finalizando conexão do cliente: " + socket);
