@@ -10,12 +10,10 @@ public class Client {
     public static void main(String[] args) {
         try {
             Socket socket;
-            if (args.length == 1) {
-                socket = new Socket(args[0],port);
-            } else {
-                InetAddress addr = InetAddress.getByName("localhost"); // pega o ip do servidor
-                socket = new Socket(addr,port);
-            }
+
+            InetAddress addr = InetAddress.getByName("localhost"); // pega o ip do servidor
+            socket = new Socket(addr, port);
+
             System.out.println("Socket:" + socket);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -28,11 +26,11 @@ public class Client {
             System.out.println(s);
 
             // interage com o usuario
-            BufferedReader teclado = new BufferedReader(
+            BufferedReader keyboard = new BufferedReader(
                     new InputStreamReader(System.in));
 
-            s = teclado.readLine();
-            while (! s.toLowerCase().equals("fim")) {
+            s = keyboard.readLine();
+            while (!s.equalsIgnoreCase("fim")) {
 
                 out.println(s); // manda o que o usuario escreveu
                 out.flush();
@@ -40,9 +38,8 @@ public class Client {
                 s = in.readLine(); // pega a resposta do servidor
                 System.out.println(s); // mostra para o usuario
 
-                s = teclado.readLine();
+                s = keyboard.readLine();
             }
-
 
             // Termina a conexao
             out.println("fim");
