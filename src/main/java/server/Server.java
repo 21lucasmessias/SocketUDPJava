@@ -10,9 +10,12 @@ public class Server {
         try {
             ServerSocket s = new ServerSocket(porta);
             System.out.println("Servidor de cadastro iniciado na porta " + s);
+
+            ConnectionController controller = new ConnectionController();
+
             while (true) {
                 Socket socket = s.accept();
-                new NewConnection(socket);
+                controller.newConnection(socket);
             }
         } catch (Exception e) {
             e.printStackTrace();

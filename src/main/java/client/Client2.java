@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
-public class Client {
+public class Client2 {
     static final int port = 8181;
 
     public static void main(String[] args) {
@@ -43,7 +43,7 @@ public class Client {
 
             s = in.readLine(); // pega a resposta do servidor
             System.out.println(s); // mostra para o usuario
-
+            
             in.close();
             out.close();
             socket.close();

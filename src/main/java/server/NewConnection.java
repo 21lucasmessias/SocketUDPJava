@@ -4,12 +4,19 @@ import java.io.*;
 import java.net.Socket;
 
 public class NewConnection extends Thread {
-    private Socket socket;
+    private final Socket socket;
+    private final ConnectionController connectionController;
+
+    private final Counter counter;
+
     private BufferedReader is;
     private PrintWriter os;
 
-    public NewConnection(Socket s) {
+    public NewConnection(Socket s, ConnectionController connectionController, Counter counter) {
         this.socket = s;
+        this.connectionController = connectionController;
+        this.counter = counter;
+
         try {
             is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             os = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
@@ -23,29 +30,35 @@ public class NewConnection extends Thread {
 
     public void run() {
         try {
-            os.println("Bem vindo ao servidor. (Digite fim para encerrar a conexao)");
-            os.flush();
-
-            int cont = 0;
-            String str = is.readLine();
-
-            System.out.println("Mesangem recebida: " + str);
-
-            while (!str.toUpperCase().equals("FIM")) {
-                os.println("Oi, voce escreveu " + str + " e esta é a " + (cont++) + " resposta que estou mandando.");
+            if (!connectionController.isSocketInUse()) {
+                connectionController.setSocketInUse(true);
+                os.println("Bem vindo ao servidor. (Digite o número a ser adicionado no somatório)");
                 os.flush();
-                str = is.readLine();
 
-                System.out.println("Mesangem recebida: " + str);
+                int intToAdd = Integer.parseInt(is.readLine());
+                counter.setSum(intToAdd);
+
+                os.println(counter.getSum());
+                os.flush();
+                connectionController.setSocketInUse(false);
+            } else {
+                os.println("Número de clientes máximo atingido, tente novamente mais tarde");
+                os.flush();
             }
-
-            System.out.println("Finalizando conexão do cliente: " + socket);
 
             is.close();
             os.close();
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
+
+            try {
+                is.close();
+                os.close();
+                socket.close();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 }
