@@ -6,14 +6,14 @@ public class ConnectionController {
 
     private boolean isSocketInUse = false;
 
-    private Counter counter;
+    private final Hangman hangman;
 
     public ConnectionController() {
-        this.counter = new Counter();
+        this.hangman = new Hangman();
     }
 
     public void newConnection(Socket s) {
-        new NewConnection(s, this, counter);
+        new NewConnection(s, this, hangman);
     }
 
     public boolean isSocketInUse() {

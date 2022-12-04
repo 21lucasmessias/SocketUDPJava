@@ -32,17 +32,36 @@ public class Client {
                 return;
             }
 
+            s = in.readLine();
+            System.out.println(s);
+
             // interage com o usuario
             BufferedReader keyboard = new BufferedReader(
                     new InputStreamReader(System.in));
 
             s = keyboard.readLine();
 
-            out.println(s); // manda o que o usuario escreveu
-            out.flush();
+            while (!s.equalsIgnoreCase("fim")) {
+                out.println(s); // manda o que o usuario escreveu
+                out.flush();
 
-            s = in.readLine(); // pega a resposta do servidor
-            System.out.println(s); // mostra para o usuario
+                s = in.readLine(); // pega a resposta do servidor
+                System.out.println(s);
+
+                if(!s.contains("_")) {
+                    System.out.println("Você ganhou!");
+                    out.println("fim");
+                    out.flush();
+
+                    break;
+                }
+
+                s = keyboard.readLine();
+            }
+
+            // Termina a conexao
+            out.println("fim");
+            out.flush();
 
             in.close();
             out.close();

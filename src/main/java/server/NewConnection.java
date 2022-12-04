@@ -7,15 +7,15 @@ public class NewConnection extends Thread {
     private final Socket socket;
     private final ConnectionController connectionController;
 
-    private final Counter counter;
+    private final Hangman hangman;
 
     private BufferedReader is;
     private PrintWriter os;
 
-    public NewConnection(Socket s, ConnectionController connectionController, Counter counter) {
+    public NewConnection(Socket s, ConnectionController connectionController, Hangman hangman) {
         this.socket = s;
         this.connectionController = connectionController;
-        this.counter = counter;
+        this.hangman = hangman;
 
         try {
             is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -32,14 +32,39 @@ public class NewConnection extends Thread {
         try {
             if (!connectionController.isSocketInUse()) {
                 connectionController.setSocketInUse(true);
-                os.println("Bem vindo ao servidor. (Digite o número a ser adicionado no somatório)");
+
+                hangman.refresh();
+
+                os.println("Bem vindo ao jogo da forca. Digite FIM para sair.");
                 os.flush();
 
-                int intToAdd = Integer.parseInt(is.readLine());
-                counter.setSum(intToAdd);
-
-                os.println(counter.getSum());
+                os.println("Tamanho da palavra: " + hangman.getPartialWord().length());
                 os.flush();
+
+                String str = is.readLine();
+
+                while (!str.toUpperCase().equals("FIM")) {
+                    try {
+                        if(str.length() != 1) {
+                            os.println("Precisamos de uma letra por vez");
+                        } else {
+                            hangman.characters.add(str);
+
+                            if(hangman.hasCharInWord(str)) {
+                                os.println("Letra encontrada na palavra: " + hangman.getPartialWord());
+                            } else {
+                                os.println("Letra não encontrada na palavra: " + hangman.getPartialWord());
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        os.println("Houve um problema ao interpretar sua mensagem");
+                    } finally {
+                        os.flush();
+                        str = is.readLine();
+                    }
+                }
+
                 connectionController.setSocketInUse(false);
             } else {
                 os.println("Número de clientes máximo atingido, tente novamente mais tarde");
@@ -51,6 +76,7 @@ public class NewConnection extends Thread {
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
+            connectionController.setSocketInUse(false);
 
             try {
                 is.close();
