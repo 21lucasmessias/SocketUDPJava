@@ -19,7 +19,7 @@ public class Bank {
         }
     }
 
-    public boolean deposit(Double value) {
+    public synchronized boolean deposit(Double value) {
         if(value > 0) {
             actualAccount.setCash(actualAccount.getCash() + value);
             return true;
@@ -28,7 +28,7 @@ public class Bank {
         return false;
     }
 
-    public boolean withdraw(Double value) {
+    public synchronized boolean withdraw(Double value) {
         if (actualAccount.getCash() >= value) {
             this.actualAccount.setCash(actualAccount.getCash() - value);
             return true;
@@ -37,7 +37,7 @@ public class Bank {
         return false;
     }
 
-    public Double currentValue() {
+    public synchronized Double currentValue() {
         return this.actualAccount.getCash();
     }
 
