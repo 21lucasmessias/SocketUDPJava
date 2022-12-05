@@ -25,7 +25,7 @@ public class Client {
             String s = in.readLine();
             System.out.println(s);
 
-            if(s.equals("Número de clientes máximo atingido, tente novamente mais tarde")) {
+            if (s.equals("Número de clientes máximo atingido, tente novamente mais tarde")) {
                 in.close();
                 out.close();
                 socket.close();
@@ -35,7 +35,6 @@ public class Client {
             s = in.readLine();
             System.out.println(s);
 
-            // interage com o usuario
             BufferedReader keyboard = new BufferedReader(
                     new InputStreamReader(System.in));
 
@@ -48,16 +47,13 @@ public class Client {
                 s = in.readLine(); // pega a resposta do servidor
                 System.out.println(s);
 
-                if(!s.contains("_")) {
-                    System.out.println("Você ganhou!");
-                    out.println("fim");
-                    out.flush();
-
+                if (s.equals("Numero de conta não encontrado.")) {
                     break;
                 }
 
                 s = keyboard.readLine();
             }
+
 
             // Termina a conexao
             out.println("fim");
