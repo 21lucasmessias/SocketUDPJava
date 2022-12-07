@@ -15,11 +15,11 @@ public class Waiter implements Runnable {
         System.out.println(Util.getNow() + " - Waiter " + id + " initialized");
     }
 
-    private synchronized boolean canWaiterServeDrinks() {
+    private boolean canWaiterServeDrinks() {
         return this.customers.size() == this.limitOfClientsPerWaiter || this.bar.allCustomersOrderedInThisRound();
     }
 
-    public synchronized void serveOrders() {
+    public void serveOrders() {
         this.customers.forEach(customer -> {
             System.out.println(Util.getNow() + " - Waiter " + id + " is serving customer " + customer.id);
             customer.isWaiting = false;
@@ -31,7 +31,7 @@ public class Waiter implements Runnable {
         this.customers.clear();
     }
 
-    public synchronized void getAnOrder() {
+    public void getAnOrder() {
         final Customer customer = this.bar.getAnOrder();
 
         if (customer != null) {

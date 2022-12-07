@@ -21,7 +21,7 @@ public class Customer implements Runnable {
         System.out.println(Util.getNow() + " - Customer " + id + " initialized");
     }
 
-    public synchronized void drink() {
+    public void drink() {
         System.out.println(Util.getNow() + " - Customer " + id + " started to drink");
         this.isDrinking = true;
 
@@ -33,7 +33,7 @@ public class Customer implements Runnable {
         this.isReadyForNextRound = true;
     }
 
-    private synchronized boolean randomlyWannaDrink() {
+    private boolean randomlyWannaDrink() {
         int max = 10;
         int min = 1;
         int range = max - min + 1;

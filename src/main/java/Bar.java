@@ -40,7 +40,6 @@ public class Bar {
                 this.customers.forEach(customer -> {
                     customer.canAskNewOrder = true;
                     customer.isReadyForNextRound = false;
-                    customer.wantToJumpRound = false;
                     customer.isServed = false;
                 });
             }
@@ -83,11 +82,11 @@ public class Bar {
         }
     }
 
-    public synchronized boolean haveRounds() {
+    public boolean haveRounds() {
         return this.numberOfRounds > 0;
     }
 
-    public synchronized boolean canGoToTheNextRound() {
+    public boolean canGoToTheNextRound() {
         return this.customers.stream().allMatch(customer -> customer.isReadyForNextRound || customer.wantToJumpRound || customer.isDrinking);
     }
 
@@ -115,7 +114,7 @@ public class Bar {
         return null;
     }
 
-    public synchronized boolean allCustomersOrderedInThisRound() {
+    public boolean allCustomersOrderedInThisRound() {
         return this.ordersInThisRound == this.quantityOfCustomers && this.orders.size() == 0;
     }
 }
