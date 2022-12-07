@@ -22,7 +22,7 @@ public class Bar {
 
     }
 
-    public void run() {
+    public void initializeBar() {
         this.initializeWaiters();
         this.initializeCustomers();
 
