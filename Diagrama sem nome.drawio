@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2022-12-08T11:48:55.916Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" etag="rQWUpZqEarSwXl81rla1" version="20.6.0" type="github">
+<mxfile host="app.diagrams.net" modified="2022-12-08T12:00:25.463Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" etag="t9Nk_-l0_wwKo9T8Jx3u" version="20.6.0" type="github">
   <diagram id="kgpKYQtTHZ0yAKxKKP6v" name="Page-1">
-    <mxGraphModel dx="1422" dy="754" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1497" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -11,10 +11,10 @@
           <mxGeometry x="45" y="70" width="10" height="950" as="geometry" />
         </mxCell>
         <mxCell id="3nuBFxr9cyL0pnOWT2aG-5" value="Client" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" parent="1" vertex="1">
-          <mxGeometry x="240" y="70" width="100" height="1220" as="geometry" />
+          <mxGeometry x="240" y="70" width="100" height="1010" as="geometry" />
         </mxCell>
         <mxCell id="3nuBFxr9cyL0pnOWT2aG-6" value="" style="points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;strokeWidth=1;" parent="3nuBFxr9cyL0pnOWT2aG-5" vertex="1">
-          <mxGeometry x="45" y="80" width="10" height="1140" as="geometry" />
+          <mxGeometry x="45" y="80" width="10" height="930" as="geometry" />
         </mxCell>
         <mxCell id="kptDPLtkgLS_DyIz2a4c-8" value="Clientes máximos" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontal=1;startSize=20;horizontalStack=0;html=1;fillColor=none;" vertex="1" parent="3nuBFxr9cyL0pnOWT2aG-5">
           <mxGeometry x="-160" y="130" width="240" height="260" as="geometry" />
@@ -42,7 +42,7 @@
             <mxPoint x="290" y="270" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="kptDPLtkgLS_DyIz2a4c-3" value="Informa conta" style="verticalAlign=bottom;endArrow=block;shadow=0;strokeWidth=1;exitX=1.1;exitY=0.321;exitDx=0;exitDy=0;exitPerimeter=0;entryX=-0.1;entryY=0.456;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="3nuBFxr9cyL0pnOWT2aG-6" target="kptDPLtkgLS_DyIz2a4c-22">
+        <mxCell id="kptDPLtkgLS_DyIz2a4c-3" value="Informa conta" style="verticalAlign=bottom;endArrow=block;shadow=0;strokeWidth=1;exitX=1.1;exitY=0.321;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="3nuBFxr9cyL0pnOWT2aG-6" target="kptDPLtkgLS_DyIz2a4c-21">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="295.0000000000001" y="200" as="sourcePoint" />
             <mxPoint x="130" y="200" as="targetPoint" />
@@ -55,10 +55,10 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="kptDPLtkgLS_DyIz2a4c-21" value="New Connection" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="500" y="190" width="100" height="620" as="geometry" />
+          <mxGeometry x="500" y="190" width="100" height="480" as="geometry" />
         </mxCell>
         <mxCell id="kptDPLtkgLS_DyIz2a4c-22" value="" style="points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="kptDPLtkgLS_DyIz2a4c-21">
-          <mxGeometry x="45" y="80" width="10" height="540" as="geometry" />
+          <mxGeometry x="45" y="80" width="10" height="400" as="geometry" />
         </mxCell>
         <mxCell id="kptDPLtkgLS_DyIz2a4c-24" value="Cria Thread conexão " style="verticalAlign=bottom;endArrow=block;shadow=0;strokeWidth=1;" edge="1" parent="1" source="3nuBFxr9cyL0pnOWT2aG-6" target="kptDPLtkgLS_DyIz2a4c-21">
           <mxGeometry relative="1" as="geometry">
@@ -70,66 +70,66 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="kptDPLtkgLS_DyIz2a4c-25" value="Conta existe" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontal=1;startSize=20;horizontalStack=0;html=1;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="260" y="540" width="340" height="750" as="geometry" />
+          <mxGeometry x="260" y="540" width="340" height="140" as="geometry" />
         </mxCell>
         <mxCell id="kptDPLtkgLS_DyIz2a4c-26" value="False" style="swimlane;startSize=20;horizontal=0;html=1;fillColor=none;" vertex="1" parent="kptDPLtkgLS_DyIz2a4c-25">
-          <mxGeometry y="20" width="340" height="120" as="geometry" />
+          <mxGeometry y="20" width="340" height="60" as="geometry" />
         </mxCell>
         <mxCell id="kptDPLtkgLS_DyIz2a4c-27" value="True" style="swimlane;startSize=20;horizontal=0;html=1;fillColor=none;" vertex="1" parent="kptDPLtkgLS_DyIz2a4c-25">
-          <mxGeometry y="140" width="340" height="610" as="geometry" />
+          <mxGeometry y="80" width="340" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="kptDPLtkgLS_DyIz2a4c-14" value="Account" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;size=40;" vertex="1" parent="kptDPLtkgLS_DyIz2a4c-27">
-          <mxGeometry x="110" y="30" width="200" height="580" as="geometry" />
-        </mxCell>
-        <mxCell id="kptDPLtkgLS_DyIz2a4c-15" value="" style="points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="kptDPLtkgLS_DyIz2a4c-14">
-          <mxGeometry x="90" y="100" width="10" height="480" as="geometry" />
-        </mxCell>
-        <mxCell id="kptDPLtkgLS_DyIz2a4c-20" value="Resgata conta" style="verticalAlign=bottom;endArrow=block;shadow=0;strokeWidth=1;" edge="1" parent="kptDPLtkgLS_DyIz2a4c-14" source="kptDPLtkgLS_DyIz2a4c-21">
+        <mxCell id="kptDPLtkgLS_DyIz2a4c-28" value="Conta não existente, fecha conexão" style="verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;shadow=0;strokeWidth=1;entryX=1.063;entryY=0.481;entryDx=0;entryDy=0;entryPerimeter=0;exitX=-0.029;exitY=0.815;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="kptDPLtkgLS_DyIz2a4c-22" target="3nuBFxr9cyL0pnOWT2aG-6">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="560" y="100" as="sourcePoint" />
-            <mxPoint x="55" y="100.00000000000011" as="targetPoint" />
+            <mxPoint x="470" y="739.66" as="targetPoint" />
+            <mxPoint x="530" y="590" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="kptDPLtkgLS_DyIz2a4c-29" value="Saque" style="verticalAlign=bottom;endArrow=block;shadow=0;strokeWidth=1;entryX=0;entryY=0;entryDx=100;entryDy=89;entryPerimeter=0;" edge="1" parent="1" source="3nuBFxr9cyL0pnOWT2aG-5" target="kptDPLtkgLS_DyIz2a4c-30">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="650" y="890" as="sourcePoint" />
+            <mxPoint x="554" y="526.24" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kptDPLtkgLS_DyIz2a4c-14" value="Account" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;collapsible=0;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;size=40;" vertex="1" parent="1">
+          <mxGeometry x="610" y="560" width="230" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="kptDPLtkgLS_DyIz2a4c-15" value="" style="points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="kptDPLtkgLS_DyIz2a4c-14">
+          <mxGeometry x="110" y="100" width="10" height="420" as="geometry" />
+        </mxCell>
         <mxCell id="kptDPLtkgLS_DyIz2a4c-30" value="" style="html=1;shadow=0;dashed=0;align=center;verticalAlign=middle;shape=mxgraph.arrows2.uTurnArrow;dy=11;arrowHead=50;dx2=25;fillColor=none;rotation=-180;" vertex="1" parent="kptDPLtkgLS_DyIz2a4c-14">
-          <mxGeometry x="90" y="140" width="100" height="100" as="geometry" />
+          <mxGeometry x="90" y="180" width="100" height="100" as="geometry" />
         </mxCell>
         <mxCell id="kptDPLtkgLS_DyIz2a4c-35" value="" style="html=1;shadow=0;dashed=0;align=center;verticalAlign=middle;shape=mxgraph.arrows2.uTurnArrow;dy=11;arrowHead=50;dx2=25;fillColor=none;rotation=-180;" vertex="1" parent="kptDPLtkgLS_DyIz2a4c-14">
           <mxGeometry x="90" y="320" width="100" height="100" as="geometry" />
         </mxCell>
         <mxCell id="kptDPLtkgLS_DyIz2a4c-36" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#b85450;strokeWidth=3;" vertex="1" parent="kptDPLtkgLS_DyIz2a4c-14">
-          <mxGeometry x="-100" y="300" width="300" height="130" as="geometry" />
+          <mxGeometry x="-360" y="300" width="570" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="kptDPLtkgLS_DyIz2a4c-37" value="Deposita dinheiro" style="verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;shadow=0;strokeWidth=1;exitX=0;exitY=0.641;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="kptDPLtkgLS_DyIz2a4c-14">
+        <mxCell id="kptDPLtkgLS_DyIz2a4c-37" value="Deposita dinheiro" style="verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;shadow=0;strokeWidth=1;exitX=0;exitY=0.641;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="kptDPLtkgLS_DyIz2a4c-14" target="3nuBFxr9cyL0pnOWT2aG-5">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="-75" y="390" as="targetPoint" />
             <mxPoint x="90" y="390" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="kptDPLtkgLS_DyIz2a4c-38" value="Depositar" style="verticalAlign=bottom;endArrow=block;shadow=0;strokeWidth=1;exitX=0.9;exitY=0.644;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="kptDPLtkgLS_DyIz2a4c-14">
+        <mxCell id="kptDPLtkgLS_DyIz2a4c-38" value="Depositar" style="verticalAlign=bottom;endArrow=block;shadow=0;strokeWidth=1;" edge="1" parent="kptDPLtkgLS_DyIz2a4c-14" source="3nuBFxr9cyL0pnOWT2aG-6">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="-76" y="354.15999999999985" as="sourcePoint" />
             <mxPoint x="94.5" y="354.15999999999985" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="kptDPLtkgLS_DyIz2a4c-33" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#b85450;strokeWidth=3;" vertex="1" parent="kptDPLtkgLS_DyIz2a4c-27">
-          <mxGeometry x="10" y="150" width="300" height="130" as="geometry" />
-        </mxCell>
-        <mxCell id="kptDPLtkgLS_DyIz2a4c-34" value="Devolve dinheiro" style="verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;shadow=0;strokeWidth=1;exitX=0;exitY=0.641;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="kptDPLtkgLS_DyIz2a4c-27" target="3nuBFxr9cyL0pnOWT2aG-6">
+        <mxCell id="kptDPLtkgLS_DyIz2a4c-34" value="Devolve dinheiro" style="verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;shadow=0;strokeWidth=1;exitX=0.089;exitY=0.271;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="kptDPLtkgLS_DyIz2a4c-15" target="3nuBFxr9cyL0pnOWT2aG-6">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="30" y="240" as="targetPoint" />
-            <mxPoint x="200" y="239.9999999999999" as="sourcePoint" />
+            <mxPoint x="295" y="970" as="targetPoint" />
+            <mxPoint x="882" y="970" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="kptDPLtkgLS_DyIz2a4c-28" value="Conta não existente, fecha conexão" style="verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;shadow=0;strokeWidth=1;exitX=0;exitY=0.641;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="kptDPLtkgLS_DyIz2a4c-22" target="3nuBFxr9cyL0pnOWT2aG-6">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="470" y="739.66" as="targetPoint" />
-            <mxPoint x="300" y="739.66" as="sourcePoint" />
-          </mxGeometry>
+        <mxCell id="kptDPLtkgLS_DyIz2a4c-33" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#b85450;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="250" y="710" width="570" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="kptDPLtkgLS_DyIz2a4c-29" value="Saque" style="verticalAlign=bottom;endArrow=block;shadow=0;strokeWidth=1;exitX=0.9;exitY=0.644;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="3nuBFxr9cyL0pnOWT2aG-6" target="kptDPLtkgLS_DyIz2a4c-14">
+        <mxCell id="kptDPLtkgLS_DyIz2a4c-20" value="Resgata conta" style="verticalAlign=bottom;endArrow=block;shadow=0;strokeWidth=1;exitX=0.941;exitY=0.976;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.181;entryY=0.001;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="kptDPLtkgLS_DyIz2a4c-22" target="kptDPLtkgLS_DyIz2a4c-15">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="306" y="525.94" as="sourcePoint" />
-            <mxPoint x="554" y="526.24" as="targetPoint" />
+            <mxPoint x="560" y="500" as="sourcePoint" />
+            <mxPoint x="845" y="660.0000000000001" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
