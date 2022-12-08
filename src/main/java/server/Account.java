@@ -14,7 +14,7 @@ public class Account {
         return cash;
     }
 
-    public void setCash(Double cash) {
+    public synchronized void setCash(Double cash) {
         this.cash = cash;
     }
 

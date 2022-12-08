@@ -37,7 +37,7 @@ public class Bank {
         return false;
     }
 
-    public synchronized Double currentValue() {
+    public Double currentValue() {
         return this.actualAccount.getCash();
     }
 
