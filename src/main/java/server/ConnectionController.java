@@ -1,26 +1,17 @@
 package server;
 
+import server.database.DB;
+
 import java.net.Socket;
 
 public class ConnectionController {
-
-    private boolean isSocketInUse = false;
-
-    private final Bank bank;
+    private final DB DB;
 
     public ConnectionController() {
-        this.bank = new Bank();
+        this.DB = new DB();
     }
 
     public void newConnection(Socket s) {
-        new NewConnection(s, this, bank);
-    }
-
-    public boolean isSocketInUse() {
-        return isSocketInUse;
-    }
-
-    public void setSocketInUse(boolean socketInUse) {
-        isSocketInUse = socketInUse;
+        new NewConnection(s, this, DB);
     }
 }

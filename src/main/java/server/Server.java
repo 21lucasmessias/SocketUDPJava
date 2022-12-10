@@ -7,11 +7,11 @@ public class Server {
     static final int porta = 8181;
 
     public static void main(String[] args) {
+        ConnectionController controller = new ConnectionController();
+
         try {
             ServerSocket s = new ServerSocket(porta);
-            System.out.println("Servidor de cadastro iniciado na porta " + s);
-
-            ConnectionController controller = new ConnectionController();
+            System.out.println("Servidor iniciado na porta " + s);
 
             while (true) {
                 Socket socket = s.accept();

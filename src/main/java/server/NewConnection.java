@@ -1,5 +1,7 @@
 package server;
 
+import server.database.DB;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -7,15 +9,15 @@ public class NewConnection extends Thread {
     private final Socket socket;
     private final ConnectionController connectionController;
 
-    private final Bank bank;
+    private final server.database.DB DB;
 
     private BufferedReader is;
     private PrintWriter os;
 
-    public NewConnection(Socket s, ConnectionController connectionController, Bank bank) {
+    public NewConnection(Socket s, ConnectionController connectionController, DB DB) {
         this.socket = s;
         this.connectionController = connectionController;
-        this.bank = bank;
+        this.DB = DB;
 
         try {
             is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -29,11 +31,11 @@ public class NewConnection extends Thread {
     }
 
     public void run() {
-        try {
+       /* try {
             if (!connectionController.isSocketInUse()) {
                 connectionController.setSocketInUse(true);
 
-                bank.refresh();
+                DB.refresh();
 
                 os.println("Bem vindo ao banco. Digite FIM para sair.");
                 os.flush();
@@ -43,7 +45,7 @@ public class NewConnection extends Thread {
 
                 String str = is.readLine();
 
-                bank.login(str);
+                //DB.login(str);
 
                 os.println("Login realizado com sucesso");
                 os.flush();
@@ -55,8 +57,8 @@ public class NewConnection extends Thread {
                         if (str.startsWith("depositar")) {
                             final Double value = Double.parseDouble(str.split(" ")[1]);
 
-                            if (bank.deposit(value)) {
-                                os.println("Valor depositado com sucesso, novo saldo: R$" + bank.currentValue());
+                            if (DB.deposit(value)) {
+                                os.println("Valor depositado com sucesso, novo saldo: R$" + DB.currentValue());
                             } else {
                                 os.println("Valor incorreto");
 
@@ -64,13 +66,13 @@ public class NewConnection extends Thread {
                         } else if (str.startsWith("sacar")) {
                             final Double value = Double.parseDouble(str.split(" ")[1]);
 
-                            if (bank.withdraw(value)) {
+                            if (DB.withdraw(value)) {
                                 os.println("Retirado: R$" + value);
                             } else {
                                 os.println("Saldo insuficiente");
                             }
                         } else if (str.startsWith("checar")) {
-                            final Double value = bank.currentValue();
+                            final Double value = DB.currentValue();
 
                             os.println("Saldo: R$" + value);
                         } else {
@@ -126,6 +128,6 @@ public class NewConnection extends Thread {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-        }
+        }*/
     }
 }
