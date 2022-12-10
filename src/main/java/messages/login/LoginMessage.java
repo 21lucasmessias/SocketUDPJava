@@ -1,7 +1,6 @@
-package server.messages;
+package messages.login;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import server.models.Login;
 
 public class LoginMessage {
     @JsonProperty("login")

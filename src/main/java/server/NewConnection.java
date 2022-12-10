@@ -1,9 +1,9 @@
 package server;
 
+import messages.login.Login;
+import messages.login.LoginMessage;
 import server.database.Database;
-import server.helpers.Mapper;
-import server.messages.LoginMessage;
-import server.models.Login;
+import helpers.Mapper;
 import server.models.User;
 
 import java.io.*;
@@ -41,10 +41,10 @@ public class NewConnection extends Thread {
             String str = is.readLine();
 
             while (!str.equalsIgnoreCase("end")) {
-                if (str.startsWith("login")) { // login: { username: "", password: "" }
+                if (str.startsWith("login")) { // messages.login: { username: "", password: "" }
                     final Login login = mapper.getMapper().readValue(str, LoginMessage.class).getLogin();
                     final Optional<User> user = database.login(login.getUsername(), login.getPassword());
-                    
+
                     if (user.isPresent()) {
                         os.println("welcome " + user.get().getName());
                     } else {

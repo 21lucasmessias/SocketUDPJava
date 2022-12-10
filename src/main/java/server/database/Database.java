@@ -3,7 +3,7 @@ package server.database;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.commons.codec.digest.DigestUtils;
-import server.helpers.Mapper;
+import helpers.Mapper;
 import server.models.User;
 
 import java.io.File;

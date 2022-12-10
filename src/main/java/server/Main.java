@@ -3,7 +3,7 @@ package server;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
+public class Main {
     static final int porta = 8181;
 
     public static void main(String[] args) {

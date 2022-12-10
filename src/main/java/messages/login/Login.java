@@ -1,4 +1,4 @@
-package server.models;
+package messages.login;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
