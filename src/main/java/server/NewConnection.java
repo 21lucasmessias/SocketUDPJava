@@ -1,19 +1,26 @@
 package server;
 
 import server.database.Database;
+import server.helpers.Mapper;
+import server.messages.LoginMessage;
+import server.models.Login;
+import server.models.User;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Optional;
 
 public class NewConnection extends Thread {
     private final Socket socket;
     private final Database database;
+    private final Mapper mapper;
     private BufferedReader is;
     private PrintWriter os;
 
     public NewConnection(Socket s, Facade dependencyInjector) {
         this.socket = s;
         this.database = dependencyInjector.getDB();
+        this.mapper = new Mapper();
 
         try {
             is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -27,94 +34,41 @@ public class NewConnection extends Thread {
     }
 
     public void run() {
-       /* try {
-            if (!connectionController.isSocketInUse()) {
-                connectionController.setSocketInUse(true);
+        try {
+            os.println("welcome");
+            os.flush();
 
-                DB.refresh();
+            String str = is.readLine();
 
-                os.println("Bem vindo ao banco. Digite FIM para sair.");
-                os.flush();
-
-                os.println("Digite o número da conta");
-                os.flush();
-
-                String str = is.readLine();
-
-                //DB.login(str);
-
-                os.println("Login realizado com sucesso");
-                os.flush();
-
-                str = is.readLine();
-
-                while (!str.equalsIgnoreCase("FIM")) {
-                    try {
-                        if (str.startsWith("depositar")) {
-                            final Double value = Double.parseDouble(str.split(" ")[1]);
-
-                            if (DB.deposit(value)) {
-                                os.println("Valor depositado com sucesso, novo saldo: R$" + DB.currentValue());
-                            } else {
-                                os.println("Valor incorreto");
-
-                            }
-                        } else if (str.startsWith("sacar")) {
-                            final Double value = Double.parseDouble(str.split(" ")[1]);
-
-                            if (DB.withdraw(value)) {
-                                os.println("Retirado: R$" + value);
-                            } else {
-                                os.println("Saldo insuficiente");
-                            }
-                        } else if (str.startsWith("checar")) {
-                            final Double value = DB.currentValue();
-
-                            os.println("Saldo: R$" + value);
-                        } else {
-                            throw new Exception();
-                        }
-                    } catch (Exception e) {
-                        os.println("Houve um problema ao interpretar sua mensagem");
-                    } finally {
-                        os.flush();
-                        str = is.readLine();
+            while (!str.equalsIgnoreCase("end")) {
+                if (str.startsWith("login")) { // login: { username: "", password: "" }
+                    final Login login = mapper.getMapper().readValue(str, LoginMessage.class).getLogin();
+                    final Optional<User> user = database.login(login.getUsername(), login.getPassword());
+                    
+                    if (user.isPresent()) {
+                        os.println("welcome " + user.get().getName());
+                    } else {
+                        throw new NotFoundAccountException();
                     }
+                } else {
+                    throw new Exception();
                 }
 
-                connectionController.setSocketInUse(false);
-            } else {
-                os.println("Número de clientes máximo atingido, tente novamente mais tarde");
                 os.flush();
+                str = is.readLine();
             }
 
-            os.println("fim");
+            os.println("end");
             os.flush();
 
             is.close();
             os.close();
             socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            connectionController.setSocketInUse(false);
-
-            os.println("fim");
-            os.flush();
-
-            try {
-                is.close();
-                os.close();
-                socket.close();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
         } catch (NotFoundAccountException e) {
-            connectionController.setSocketInUse(false);
-
-            os.println("Numero de conta não encontrado.");
+            os.println("user-not-found.");
             os.flush();
 
-            os.println("fim");
+            os.println("end");
             os.flush();
 
             try {
@@ -124,6 +78,19 @@ public class NewConnection extends Thread {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-        }*/
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            os.println("end");
+            os.flush();
+
+            try {
+                is.close();
+                os.close();
+                socket.close();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 }
