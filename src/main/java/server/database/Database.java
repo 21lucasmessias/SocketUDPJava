@@ -3,7 +3,6 @@ package server.database;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.commons.codec.digest.DigestUtils;
-import server.NotFoundAccountException;
 import server.helpers.Mapper;
 import server.models.User;
 
@@ -13,17 +12,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
-public class DB {
+public class Database {
     final private Mapper mapper;
 
-    final private List<User> users = new ArrayList<>(List.of());
+    final private HashMap<String, User> users = new HashMap<>();
 
-    public DB() {
+    public Database() {
         this.mapper = new Mapper();
         this.loadDataFromFile();
     }
@@ -37,7 +33,7 @@ public class DB {
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
                 final User user = this.mapper.getMapper().readValue(data, User.class);
-                this.users.add(user);
+                this.users.put(user.getId(), user);
             }
 
             myReader.close();
@@ -57,11 +53,7 @@ public class DB {
             Path path = Paths.get("src/main/java/server/database/users.txt");
             FileWriter myWriter = new FileWriter(String.valueOf(path));
 
-            users.add(new User("1", "lucas", "lucas", new DigestUtils("SHA3-256").digestAsHex("123456")));
-            users.add(new User("2", "lucas", "lucas", new DigestUtils("SHA3-256").digestAsHex("234567")));
-            users.add(new User("3", "lucas", "lucas", new DigestUtils("SHA3-256").digestAsHex("345678")));
-
-            users.forEach(user -> {
+            users.forEach((id, user)-> {
                 try {
                     myWriter.write(mapper.getMapper().writeValueAsString(user) + '\n');
                 } catch (IOException e) {
@@ -79,7 +71,7 @@ public class DB {
     }
 
     public Optional<User> login(String username, String password) {
-        return this.users.stream().filter(user -> {
+        return this.users.values().stream().filter(user -> {
             return user.getUsername().equals(username) && user.getPassword().equals(new DigestUtils("SHA3-256").digestAsHex(password));
         }).findFirst();
     }

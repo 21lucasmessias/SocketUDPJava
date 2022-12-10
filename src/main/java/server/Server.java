@@ -7,7 +7,7 @@ public class Server {
     static final int porta = 8181;
 
     public static void main(String[] args) {
-        ConnectionController controller = new ConnectionController();
+        Facade facade = new Facade();
 
         try {
             ServerSocket s = new ServerSocket(porta);
@@ -15,7 +15,7 @@ public class Server {
 
             while (true) {
                 Socket socket = s.accept();
-                controller.newConnection(socket);
+                facade.newConnection(socket);
             }
         } catch (Exception e) {
             e.printStackTrace();

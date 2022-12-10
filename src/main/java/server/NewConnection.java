@@ -1,28 +1,24 @@
 package server;
 
-import server.database.DB;
+import server.database.Database;
 
 import java.io.*;
 import java.net.Socket;
 
 public class NewConnection extends Thread {
     private final Socket socket;
-    private final ConnectionController connectionController;
-
-    private final server.database.DB DB;
-
+    private final Database database;
     private BufferedReader is;
     private PrintWriter os;
 
-    public NewConnection(Socket s, ConnectionController connectionController, DB DB) {
+    public NewConnection(Socket s, Facade dependencyInjector) {
         this.socket = s;
-        this.connectionController = connectionController;
-        this.DB = DB;
+        this.database = dependencyInjector.getDB();
 
         try {
             is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             os = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
-            start(); // dispara a Thread
+            start();
 
             System.out.println("Nova connexão: " + socket);
         } catch (IOException e) {
