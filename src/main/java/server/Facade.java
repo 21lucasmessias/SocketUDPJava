@@ -12,7 +12,7 @@ public class Facade {
     }
 
     public void newConnection(Socket s) {
-        new NewConnection(s, this);
+        new MessagesHandler(s, this);
     }
 
     public Database getDB() {

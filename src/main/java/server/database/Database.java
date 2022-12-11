@@ -2,10 +2,12 @@ package server.database;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import dtos.GroupDTO;
+import dtos.UserDTO;
 import helpers.Mapper;
 import org.apache.commons.codec.digest.DigestUtils;
+import server.models.Group;
 import server.models.User;
-import dtos.UserDTO;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,6 +24,8 @@ public class Database {
     final private Mapper mapper;
 
     final private HashMap<String, User> users = new HashMap<>();
+
+    final private HashMap<String, Group> groups = new HashMap<>();
 
     public Database() {
         this.mapper = new Mapper();
@@ -83,4 +87,9 @@ public class Database {
     public List<UserDTO> getUsers() {
         return users.values().stream().map(User::toDto).toList();
     }
+
+    public List<GroupDTO> getGroups() {
+        return groups.values().stream().map(Group::toDto).toList();
+    }
+
 }

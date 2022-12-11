@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dtos.UserDTO;
 import helpers.Mapper;
+import messages.home.HomeGroupsMessage;
 import messages.home.HomeUsersMessage;
 import messages.login.Login;
 import messages.login.LoginMessage;
@@ -42,9 +43,16 @@ public class User {
 
         if (user.isPresent()) {
             os.println("welcome " + user.get().getName());
+
             os.flush();
+
             final HomeUsersMessage homeUsersMessage = new HomeUsersMessage(database.getUsers());
             os.println(mapper.getMapper().writeValueAsString(homeUsersMessage));
+
+            os.flush();
+
+            final HomeGroupsMessage homeGroupsMessage = new HomeGroupsMessage(database.getGroups());
+            os.println(mapper.getMapper().writeValueAsString(homeGroupsMessage));
         } else {
             os.println("user-not-found");
         }

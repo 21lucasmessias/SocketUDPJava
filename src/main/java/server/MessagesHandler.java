@@ -1,21 +1,20 @@
 package server;
 
 import helpers.Mapper;
-import messages.login.Login;
 import server.database.Database;
 import server.models.User;
 
 import java.io.*;
 import java.net.Socket;
 
-public class NewConnection extends Thread {
+public class MessagesHandler extends Thread {
     private final Socket socket;
     private final Database database;
     private final Mapper mapper;
     private BufferedReader is;
     private PrintWriter os;
 
-    public NewConnection(Socket s, Facade dependencyInjector) {
+    public MessagesHandler(Socket s, Facade dependencyInjector) {
         this.socket = s;
         this.database = dependencyInjector.getDB();
         this.mapper = new Mapper();

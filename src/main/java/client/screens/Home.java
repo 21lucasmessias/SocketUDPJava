@@ -1,7 +1,9 @@
 package client.screens;
 
 import client.Controller;
+import dtos.GroupDTO;
 import dtos.UserDTO;
+import messages.home.HomeGroupsMessage;
 import messages.home.HomeUsersMessage;
 
 import javax.swing.*;
@@ -40,14 +42,14 @@ public class Home extends Screen {
             }
         } else if (message.startsWith("{\"homeGroupsMessage")) {
             try {
-                final HomeUsersMessage homeUsersMessage = this.controller.getMapper().readValue(message, HomeUsersMessage.class);
-                final java.util.List<String> users = new ArrayList<>(java.util.List.of());
+                final HomeGroupsMessage homeGroupsMessage = this.controller.getMapper().readValue(message, HomeGroupsMessage.class);
+                final java.util.List<String> groups = new ArrayList<>(java.util.List.of());
 
-                for (UserDTO user : homeUsersMessage.getHomeUsersMessage()) {
-                    users.add(user.getId() + " - " + user.getName());
+                for (GroupDTO group : homeGroupsMessage.getHomeGroupsMessage()) {
+                    groups.add(group.getId() + " - " + group.getName());
                 }
 
-                listOfGroups.setListData(users.toArray(String[]::new));
+                listOfGroups.setListData(groups.toArray(String[]::new));
             } catch (Exception e) {
                 e.printStackTrace();
             }
