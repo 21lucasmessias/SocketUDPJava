@@ -56,7 +56,7 @@ public class Database {
         }
     }
 
-    private void saveDataToFile() {
+    private synchronized void saveDataToFile() {
         try {
             Path path = Paths.get("src/main/java/server/database/users.txt");
             FileWriter myWriter = new FileWriter(String.valueOf(path));
@@ -78,10 +78,29 @@ public class Database {
         }
     }
 
-    public Optional<User> login(String username, String password) {
+    public synchronized Optional<User> login(String username, String password) {
         return this.users.values().stream().filter(user -> {
             return user.getUsername().equals(username) && user.getPassword().equals(new DigestUtils("SHA3-256").digestAsHex(password));
         }).findFirst();
+    }
+
+    public synchronized boolean register(String username, String password) {
+        final Optional<User> foundUser = this.users.values().stream().filter(user -> {
+            return user.getUsername().equals(username);
+        }).findFirst();
+
+        final boolean loginAlreadyExists = foundUser.isPresent();
+
+        if (!loginAlreadyExists) {
+            final var newUser = User.from(username, new DigestUtils("SHA3-256").digestAsHex(password));
+            this.users.put(newUser.getId(), newUser);
+
+            this.saveDataToFile();
+
+            return true;
+        }
+
+        return false;
     }
 
     public List<UserDTO> getUsers() {

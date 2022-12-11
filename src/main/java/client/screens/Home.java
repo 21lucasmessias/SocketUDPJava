@@ -19,7 +19,7 @@ public class Home extends Screen {
         this.controller = controller;
 
         this.setContentPane(this.container);
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1080, 720);
     }
 
@@ -33,7 +33,7 @@ public class Home extends Screen {
                 final java.util.List<String> users = new ArrayList<>(java.util.List.of());
 
                 for (UserDTO user : homeUsersMessage.getHomeUsersMessage()) {
-                    users.add(user.getId() + " - " + user.getName());
+                    users.add(user.getId() + " - " + user.getUsername());
                 }
 
                 listOfUsers.setListData(users.toArray(String[]::new));

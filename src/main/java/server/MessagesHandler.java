@@ -2,7 +2,7 @@ package server;
 
 import helpers.Mapper;
 import server.database.Database;
-import server.models.User;
+import server.gateways.UserGateway;
 
 import java.io.*;
 import java.net.Socket;
@@ -41,7 +41,9 @@ public class MessagesHandler extends Thread {
                 System.out.println(str);
 
                 if (str.startsWith("{\"login")) { // {"login":{"username":"lucas","password":"123456"}}
-                    User.Login(str, mapper, database, os);
+                    UserGateway.login(str, mapper, database, os);
+                } else if (str.startsWith("{\"register")) { // {"register":{"username":"lucas","password":"123456"}}
+                    UserGateway.register(str, mapper, database, os);
                 } else {
                     throw new Exception();
                 }

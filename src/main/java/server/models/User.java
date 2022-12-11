@@ -1,23 +1,13 @@
 package server.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import dtos.UserDTO;
-import helpers.Mapper;
-import messages.home.HomeGroupsMessage;
-import messages.home.HomeUsersMessage;
-import messages.login.Login;
-import messages.login.LoginMessage;
-import server.database.Database;
 
-import java.io.PrintWriter;
-import java.util.Optional;
+import java.util.UUID;
 
 public class User {
     @JsonProperty("id")
     private String id;
-    @JsonProperty("name")
-    private String name;
     @JsonProperty("username")
     private String username;
     @JsonProperty("password")
@@ -25,37 +15,18 @@ public class User {
 
     public User() {
         this.id = "";
-        this.name = "";
         this.username = "";
         this.password = "";
     }
 
-    public User(final String id, final String name, final String username, final String password) {
+    public User(final String id, final String username, final String password) {
         this.id = id;
-        this.name = name;
         this.username = username;
         this.password = password;
     }
 
-    public static void Login(String message, Mapper mapper, Database database, PrintWriter os) throws JsonProcessingException {
-        final Login login = mapper.getMapper().readValue(message, LoginMessage.class).getLogin();
-        final Optional<User> user = database.login(login.getUsername(), login.getPassword());
-
-        if (user.isPresent()) {
-            os.println("welcome " + user.get().getName());
-
-            os.flush();
-
-            final HomeUsersMessage homeUsersMessage = new HomeUsersMessage(database.getUsers());
-            os.println(mapper.getMapper().writeValueAsString(homeUsersMessage));
-
-            os.flush();
-
-            final HomeGroupsMessage homeGroupsMessage = new HomeGroupsMessage(database.getGroups());
-            os.println(mapper.getMapper().writeValueAsString(homeGroupsMessage));
-        } else {
-            os.println("user-not-found");
-        }
+    public static User from(String username, String password) {
+        return new User(UUID.randomUUID().toString(), username, password);
     }
 
     public String getId() {
@@ -64,14 +35,6 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getUsername() {
@@ -91,6 +54,6 @@ public class User {
     }
 
     public UserDTO toDto() {
-        return new UserDTO(this.id, this.name);
+        return new UserDTO(this.id, this.username);
     }
 }

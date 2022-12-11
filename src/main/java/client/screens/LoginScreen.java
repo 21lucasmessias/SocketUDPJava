@@ -3,28 +3,29 @@ package client.screens;
 import client.Controller;
 import messages.login.Login;
 import messages.login.LoginMessage;
+import messages.register.Register;
+import messages.register.RegisterMessage;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class LoginScreen extends Screen {
+    private final Controller controller;
     private JButton loginButton;
     private JButton registerButton;
     private JPasswordField passwordField;
     private JTextField textField;
     private JPanel container;
-    private JLabel notFoundAlert;
-
-    private final Controller controller;
+    private JLabel alert;
 
     public LoginScreen(Controller controller) {
         this.setContentPane(this.container);
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1080, 720);
         this.setVisible(true);
 
-        this.notFoundAlert.setVisible(false);
+        this.alert.setVisible(false);
 
         this.controller = controller;
 
@@ -35,6 +36,15 @@ public class LoginScreen extends Screen {
                 String passwordText = String.valueOf(passwordField.getPassword());
 
                 login(loginText, passwordText);
+            }
+        });
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String loginText = textField.getText();
+                String passwordText = String.valueOf(passwordField.getPassword());
+
+                register(loginText, passwordText);
             }
         });
     }
@@ -49,11 +59,26 @@ public class LoginScreen extends Screen {
         }
     }
 
+    public void register(String username, String password) {
+        try {
+            RegisterMessage registerMessage = new RegisterMessage(new Register(username, password));
+            this.controller.getWriter().println(this.controller.getMapper().writeValueAsString(registerMessage));
+            this.controller.getWriter().flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void handleMessage(String message) {
-        if(message.equals("user-not-found")) {
-            this.notFoundAlert.setVisible(true);
+        if (message.equals("user-not-found")) {
+            this.alert.setText("User not found!");
+            this.alert.setVisible(true);
+        } else if (message.equals("invalid-user")) {
+            this.alert.setText("User already exists!");
+            this.alert.setVisible(true);
         } else if (message.startsWith("welcome")) {
+            this.alert.setVisible(false);
             this.controller.openHomeScreen();
         }
     }

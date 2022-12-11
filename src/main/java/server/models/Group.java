@@ -16,12 +16,12 @@ public class Group {
         this.name = name;
     }
 
-    public GroupDTO toDto() {
-        return new GroupDTO(this.id, this.name);
+    public static Group from(final String name) {
+        return new Group(UUID.randomUUID().toString(), name);
     }
 
-    public static Group createGroup(final String name) {
-        return new Group(UUID.randomUUID().toString(), name);
+    public GroupDTO toDto() {
+        return new GroupDTO(this.id, this.name);
     }
 
     public String getId() {

@@ -5,23 +5,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class UserDTO {
     @JsonProperty("id")
     private String id;
-    @JsonProperty("name")
-    private String name;
+    @JsonProperty("username")
+    private String username;
 
     public UserDTO() {
     }
 
-    public UserDTO(String id, String name) {
+    public UserDTO(String id, String username) {
         this.id = id;
-        this.name = name;
+        this.username = username;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getId() {
