@@ -20,7 +20,7 @@ public class LoginScreen extends Screen {
 
     public LoginScreen(Controller controller) {
         this.setContentPane(this.container);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setSize(1080, 720);
         this.setVisible(true);
 
@@ -53,6 +53,8 @@ public class LoginScreen extends Screen {
     public void handleMessage(String message) {
         if(message.equals("user-not-found")) {
             this.notFoundAlert.setVisible(true);
+        } else if (message.startsWith("welcome")) {
+            this.controller.openHomeScreen();
         }
     }
 }

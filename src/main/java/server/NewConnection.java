@@ -35,7 +35,7 @@ public class NewConnection extends Thread {
 
     public void run() {
         try {
-            os.println("welcome");
+            os.println("connected");
             os.flush();
 
             String str = is.readLine();

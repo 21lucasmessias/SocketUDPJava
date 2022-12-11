@@ -1,11 +1,11 @@
 package client;
 
+import client.screens.Home;
 import client.screens.LoginScreen;
 import client.screens.Screen;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import helpers.Mapper;
 
-import javax.swing.*;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -20,6 +20,8 @@ public class Controller {
     private Screen frame;
 
     public Controller(Socket socket) throws IOException {
+        this.frame = new LoginScreen(this);
+
         this.mapper = new Mapper();
 
         this.socket = socket;
@@ -35,7 +37,6 @@ public class Controller {
             e.printStackTrace();
         }
 
-        this.frame = new LoginScreen(this);
     }
 
     public void closeConnection() {
@@ -63,5 +64,12 @@ public class Controller {
 
     public void setFrame(Screen frame) {
         this.frame = frame;
+    }
+
+    public void openHomeScreen() {
+        this.frame.setVisible(false);
+        final Screen home = new Home(this);
+        this.setFrame(home);
+        this.frame.setVisible(true);
     }
 }

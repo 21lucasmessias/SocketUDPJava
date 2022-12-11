@@ -24,7 +24,7 @@ public class Reader implements Runnable {
 
                     if (message.equals("end")) {
                         break;
-                    } else if (message.equals("user-not-found")) {
+                    } else {
                         this.controller.getFrame().handleMessage(message);
                     }
                 }
