@@ -1,9 +1,9 @@
 package server;
 
+import helpers.Mapper;
 import messages.login.Login;
 import messages.login.LoginMessage;
 import server.database.Database;
-import helpers.Mapper;
 import server.models.User;
 
 import java.io.*;
@@ -41,7 +41,9 @@ public class NewConnection extends Thread {
             String str = is.readLine();
 
             while (!str.equalsIgnoreCase("end")) {
-                if (str.startsWith("login")) { // messages.login: { username: "", password: "" }
+                System.out.println(str);
+
+                if (str.startsWith("{\"login")) { // {"login":{"username":"lucas","password":"123456"}}
                     final Login login = mapper.getMapper().readValue(str, LoginMessage.class).getLogin();
                     final Optional<User> user = database.login(login.getUsername(), login.getPassword());
 

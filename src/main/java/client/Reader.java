@@ -6,10 +6,11 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class Reader implements Runnable {
-
     private final BufferedReader reader;
+    private final Controller controller;
 
-    public Reader(Socket socket) throws IOException {
+    public Reader(Socket socket, Controller controller) throws IOException {
+        this.controller = controller;
         this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
@@ -22,7 +23,6 @@ public class Reader implements Runnable {
                     System.out.println(message);
 
                     if (message.equals("end")) {
-                        reader.close();
                         break;
                     }
                 }
@@ -31,6 +31,16 @@ public class Reader implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+        controller.closeConnection();
+    }
+
+    public void close() {
+        try {
+            reader.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

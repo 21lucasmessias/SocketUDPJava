@@ -12,18 +12,7 @@ public class Main {
 
             InetAddress addr = InetAddress.getByName("localhost"); // pega o ip do servidor
             socket = new Socket(addr, port);
-
-            System.out.println("Socket:" + socket);
-
-            try {
-                Thread reader = new Thread(new Reader(socket));
-                reader.start();
-
-                Controller controller = new Controller(socket);
-            } catch (Exception e) {
-                socket.close();
-                e.printStackTrace();
-            }
+            new Controller(socket);
         } catch (Exception e) {
             e.printStackTrace();
         }
