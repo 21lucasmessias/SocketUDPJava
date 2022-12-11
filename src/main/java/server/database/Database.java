@@ -2,9 +2,10 @@ package server.database;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import org.apache.commons.codec.digest.DigestUtils;
 import helpers.Mapper;
+import org.apache.commons.codec.digest.DigestUtils;
 import server.models.User;
+import dtos.UserDTO;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,7 +13,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
 
 public class Database {
     final private Mapper mapper;
@@ -53,7 +57,7 @@ public class Database {
             Path path = Paths.get("src/main/java/server/database/users.txt");
             FileWriter myWriter = new FileWriter(String.valueOf(path));
 
-            users.forEach((id, user)-> {
+            users.forEach((id, user) -> {
                 try {
                     myWriter.write(mapper.getMapper().writeValueAsString(user) + '\n');
                 } catch (IOException e) {
@@ -74,5 +78,9 @@ public class Database {
         return this.users.values().stream().filter(user -> {
             return user.getUsername().equals(username) && user.getPassword().equals(new DigestUtils("SHA3-256").digestAsHex(password));
         }).findFirst();
+    }
+
+    public List<UserDTO> getUsers() {
+        return users.values().stream().map(User::toDto).toList();
     }
 }

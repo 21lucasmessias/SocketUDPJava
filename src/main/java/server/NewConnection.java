@@ -2,13 +2,11 @@ package server;
 
 import helpers.Mapper;
 import messages.login.Login;
-import messages.login.LoginMessage;
 import server.database.Database;
 import server.models.User;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Optional;
 
 public class NewConnection extends Thread {
     private final Socket socket;
@@ -44,14 +42,7 @@ public class NewConnection extends Thread {
                 System.out.println(str);
 
                 if (str.startsWith("{\"login")) { // {"login":{"username":"lucas","password":"123456"}}
-                    final Login login = mapper.getMapper().readValue(str, LoginMessage.class).getLogin();
-                    final Optional<User> user = database.login(login.getUsername(), login.getPassword());
-
-                    if (user.isPresent()) {
-                        os.println("welcome " + user.get().getName());
-                    } else {
-                        os.println("user-not-found");
-                    }
+                    User.Login(str, mapper, database, os);
                 } else {
                     throw new Exception();
                 }
