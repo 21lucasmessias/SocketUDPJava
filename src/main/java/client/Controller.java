@@ -1,9 +1,9 @@
 package client;
 
 import client.screens.LoginScreen;
+import client.screens.Screen;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import helpers.Mapper;
-import messages.login.Login;
-import messages.login.LoginMessage;
 
 import javax.swing.*;
 import java.io.BufferedWriter;
@@ -17,7 +17,7 @@ public class Controller {
     protected final PrintWriter writer;
     private final Mapper mapper;
     private final Socket socket;
-    private final JFrame frame;
+    private Screen frame;
 
     public Controller(Socket socket) throws IOException {
         this.mapper = new Mapper();
@@ -49,13 +49,19 @@ public class Controller {
         }
     }
 
-    public void login(String username, String password) {
-        try {
-            LoginMessage loginMessage = new LoginMessage(new Login(username, password));
-            this.writer.println(mapper.getMapper().writeValueAsString(loginMessage));
-            this.writer.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public ObjectMapper getMapper() {
+        return mapper.getMapper();
+    }
+
+    public PrintWriter getWriter() {
+        return writer;
+    }
+
+    public Screen getFrame() {
+        return frame;
+    }
+
+    public void setFrame(Screen frame) {
+        this.frame = frame;
     }
 }

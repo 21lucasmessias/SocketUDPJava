@@ -50,7 +50,7 @@ public class NewConnection extends Thread {
                     if (user.isPresent()) {
                         os.println("welcome " + user.get().getName());
                     } else {
-                        throw new NotFoundAccountException();
+                        os.println("user-not-found");
                     }
                 } else {
                     throw new Exception();
@@ -66,20 +66,6 @@ public class NewConnection extends Thread {
             is.close();
             os.close();
             socket.close();
-        } catch (NotFoundAccountException e) {
-            os.println("user-not-found.");
-            os.flush();
-
-            os.println("end");
-            os.flush();
-
-            try {
-                is.close();
-                os.close();
-                socket.close();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
         } catch (Exception e) {
             e.printStackTrace();
 
