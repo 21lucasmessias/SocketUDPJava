@@ -44,7 +44,7 @@ public class MessagesHandler extends Thread {
                 if (str.startsWith("{\"login")) { // {"login":{"username":"lucas","password":"123456"}}
                     UserGateway.login(str, mapper, database, os, socket);
                 } else if (str.startsWith("{\"register")) { // {"register":{"username":"lucas","password":"123456"}}
-                    UserGateway.register(str, mapper, database, os);
+                    UserGateway.register(str, mapper, database, os, socket);
                 } else if (str.startsWith("{\"privateChat")) { // {"privateChat":{"from":"123","to":"456","content":"ablublé"}}
                     HomeGateway.privateChat(str, mapper, database);
                 } else {

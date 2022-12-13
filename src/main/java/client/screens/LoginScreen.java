@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import messages.login.Login;
 import messages.login.LoginMessage;
+import messages.login.SetUserMessage;
 import messages.register.Register;
 import messages.register.RegisterMessage;
 
@@ -84,7 +85,9 @@ public class LoginScreen extends Screen {
             this.alert.setVisible(false);
             this.controller.openHomeScreen();
         } else if (message.startsWith("{\"setUser")) {
-            this.controller.setUser(this.controller.getMapper().readValue(message, User.class));
+            final SetUserMessage setUserMessage = this.controller.getMapper().readValue(message, SetUserMessage.class);
+            final User user = new User(setUserMessage.getSetUser().getId(), setUserMessage.getSetUser().getUsername());
+            this.controller.setUser(user);
         }
     }
 }

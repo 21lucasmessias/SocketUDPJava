@@ -44,12 +44,28 @@ public class UserGateway {
         }
     }
 
-    public static void register(String message, Mapper mapper, Database database, PrintWriter os) throws JsonProcessingException {
+    public static void register(String message, Mapper mapper, Database database, PrintWriter os, Socket socket) throws JsonProcessingException {
         final Register register = mapper.getMapper().readValue(message, RegisterMessage.class).getRegister();
         final boolean success = database.register(register.getUsername(), register.getPassword());
+        final Optional<User> user = database.login(register.getUsername(), register.getPassword());
 
-        if (success) {
-            os.println("welcome");
+        if (success && user.isPresent()) {
+            user.get().setWriter(os);
+            user.get().setSocket(socket);
+
+            os.println(mapper.getMapper().writeValueAsString(new SetUserMessage(new SetUser(user.get().getUsername(), user.get().getId()))));
+            os.flush();
+
+            os.println("welcome " + user.get().getUsername());
+            os.flush();
+
+            final HomeUsersMessage homeUsersMessage = new HomeUsersMessage(database.getUsersList());
+            os.println(mapper.getMapper().writeValueAsString(homeUsersMessage));
+
+            os.flush();
+
+            final HomeGroupsMessage homeGroupsMessage = new HomeGroupsMessage(database.getGroups());
+            os.println(mapper.getMapper().writeValueAsString(homeGroupsMessage));
         } else {
             os.println("invalid-user");
         }
