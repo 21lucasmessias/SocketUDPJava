@@ -1,6 +1,9 @@
 package client.screens;
 
 import client.Controller;
+import client.models.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import messages.login.Login;
 import messages.login.LoginMessage;
 import messages.register.Register;
@@ -70,7 +73,7 @@ public class LoginScreen extends Screen {
     }
 
     @Override
-    public void handleMessage(String message) {
+    public void handleMessage(String message) throws JsonProcessingException {
         if (message.equals("user-not-found")) {
             this.alert.setText("User not found!");
             this.alert.setVisible(true);
@@ -80,6 +83,8 @@ public class LoginScreen extends Screen {
         } else if (message.startsWith("welcome")) {
             this.alert.setVisible(false);
             this.controller.openHomeScreen();
+        } else if (message.startsWith("{\"setUser")) {
+            this.controller.setUser(this.controller.getMapper().readValue(message, User.class));
         }
     }
 }

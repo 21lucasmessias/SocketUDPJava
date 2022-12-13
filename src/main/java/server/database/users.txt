@@ -1,1 +1,2 @@
 {"id":"138ef003-260a-4bf8-9ed6-f93eda80047c","username":"teste","password":"c8a2d029074842a6ef31d8d8b6e10714ee16d679f029986fce0bf2ac6a5ceac2"}
+{"id":"50da2170-c83e-4557-a797-7f4f568d84f9","username":"lucas","password":"d7190eb194ff9494625514b6d178c87f99c5973e28c398969d2233f2960a573e"}

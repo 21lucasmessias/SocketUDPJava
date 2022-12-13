@@ -6,6 +6,7 @@ import dtos.GroupDTO;
 import dtos.UserDTO;
 import helpers.Mapper;
 import org.apache.commons.codec.digest.DigestUtils;
+import server.models.ChatMessage;
 import server.models.Group;
 import server.models.User;
 
@@ -24,8 +25,9 @@ public class Database {
     final private Mapper mapper;
 
     final private HashMap<String, User> users = new HashMap<>();
-
     final private HashMap<String, Group> groups = new HashMap<>();
+
+    final private HashMap<String, ChatMessage> messages = new HashMap<>();
 
     public Database() {
         this.mapper = new Mapper();
@@ -103,7 +105,11 @@ public class Database {
         return false;
     }
 
-    public List<UserDTO> getUsers() {
+    public HashMap<String, User> getUsers() {
+        return this.users;
+    }
+
+    public List<UserDTO> getUsersList() {
         return users.values().stream().map(User::toDto).toList();
     }
 
@@ -111,4 +117,7 @@ public class Database {
         return groups.values().stream().map(Group::toDto).toList();
     }
 
+    public HashMap<String, ChatMessage> getMessages() {
+        return messages;
+    }
 }

@@ -2,6 +2,7 @@ package server;
 
 import helpers.Mapper;
 import server.database.Database;
+import server.gateways.HomeGateway;
 import server.gateways.UserGateway;
 
 import java.io.*;
@@ -41,9 +42,11 @@ public class MessagesHandler extends Thread {
                 System.out.println(str);
 
                 if (str.startsWith("{\"login")) { // {"login":{"username":"lucas","password":"123456"}}
-                    UserGateway.login(str, mapper, database, os);
+                    UserGateway.login(str, mapper, database, os, socket);
                 } else if (str.startsWith("{\"register")) { // {"register":{"username":"lucas","password":"123456"}}
                     UserGateway.register(str, mapper, database, os);
+                } else if (str.startsWith("{\"privateChat")) { // {"privateChat":{"from":"123","to":"456","content":"ablublé"}}
+                    HomeGateway.privateChat(str, mapper, database);
                 } else {
                     throw new Exception();
                 }
@@ -59,8 +62,6 @@ public class MessagesHandler extends Thread {
             os.close();
             socket.close();
         } catch (Exception e) {
-            e.printStackTrace();
-
             os.println("end");
             os.flush();
 

@@ -1,8 +1,11 @@
 package server.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dtos.UserDTO;
 
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.UUID;
 
 public class User {
@@ -12,11 +15,12 @@ public class User {
     private String username;
     @JsonProperty("password")
     private String password;
+    @JsonIgnore
+    private PrintWriter writer = null;
+    @JsonIgnore
+    private Socket socket;
 
     public User() {
-        this.id = "";
-        this.username = "";
-        this.password = "";
     }
 
     public User(final String id, final String username, final String password) {
@@ -55,5 +59,21 @@ public class User {
 
     public UserDTO toDto() {
         return new UserDTO(this.id, this.username);
+    }
+
+    public PrintWriter getWriter() {
+        return writer;
+    }
+
+    public void setWriter(PrintWriter writer) {
+        this.writer = writer;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
     }
 }

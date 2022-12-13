@@ -1,5 +1,6 @@
 package client;
 
+import client.models.User;
 import client.screens.Home;
 import client.screens.LoginScreen;
 import client.screens.Screen;
@@ -18,6 +19,7 @@ public class Controller {
     private final Mapper mapper;
     private final Socket socket;
     private Screen frame;
+    private User user;
 
     public Controller(Socket socket) throws IOException {
         this.frame = new LoginScreen(this);
@@ -71,5 +73,13 @@ public class Controller {
         final Screen home = new Home(this);
         this.setFrame(home);
         this.frame.setVisible(true);
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
