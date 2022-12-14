@@ -2,10 +2,10 @@ package client.screens;
 
 import client.Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import dtos.ChatMessageDTO;
 import dtos.GroupDTO;
 import dtos.UserDTO;
-import messages.chat.PrivateChat;
-import messages.chat.PrivateChatMessage;
+import messages.chat.*;
 import messages.home.DisconnectMessage;
 import messages.home.HomeGroupsMessage;
 import messages.home.HomeUsersMessage;
@@ -15,14 +15,13 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Home extends Screen {
     private final Controller controller;
-    private final GridLayout messagesLayout;
     private JPanel container;
     private JTextField chatField;
     private JButton sendButton;
@@ -40,29 +39,42 @@ public class Home extends Screen {
         this.setSize(1080, 720);
         this.setTitle(this.controller.getUser().getUsername());
 
-        this.messagesLayout = new GridLayout(0, 1, 0, 4);
-        this.messagesContainer.setLayout(this.messagesLayout);
+        GridLayout messagesLayout = new GridLayout(0, 1, 0, 4);
+        this.messagesContainer.setLayout(messagesLayout);
 
-        sendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!targetLabel.getText().equals("Select someone to chat")) {
-                    try {
-                        sendMessage();
-                    } catch (JsonProcessingException ex) {
-                        throw new RuntimeException(ex);
-                    }
+        sendButton.addActionListener(e -> {
+            if (!targetLabel.getText().equals("Select someone to chat")) {
+                try {
+                    sendMessage();
+                } catch (JsonProcessingException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });
 
-        listOfUsers.addListSelectionListener(new ListSelectionListener() {
+        listOfUsers.addMouseListener(new MouseAdapter() {
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                setSelectedUserId(listOfUsers.getSelectedValue().split(" - ")[0]);
-                final String nameOfTarget = listOfUsers.getSelectedValue().split(" - ")[1];
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
 
-                targetLabel.setText(nameOfTarget);
+                final String selectedOption = listOfUsers.getSelectedValue();
+                final String targetId = selectedOption.split(" - ")[0];
+                final String targetName = selectedOption.split(" - ")[1];
+
+                final RequestAllChat requestAllChat = new RequestAllChat(controller.getUser().getId(), targetId);
+                final RequestAllChatMessage requestAllChatMessage = new RequestAllChatMessage(requestAllChat);
+
+                try {
+                    controller.getWriter().println(controller.getMapper().writeValueAsString(requestAllChatMessage));
+                } catch (JsonProcessingException ex) {
+                    throw new RuntimeException(ex);
+                }
+                controller.getWriter().flush();
+
+                messagesContainer.removeAll();
+
+                targetLabel.setText(targetName);
+                setSelectedUserId(targetId);
             }
         });
     }
@@ -130,11 +142,25 @@ public class Home extends Screen {
                 this.listOfUsers.setListData(users.toArray(String[]::new));
             } else if (message.startsWith("{\"privateChat")) {
                 final PrivateChatMessage privateChatMessage = this.controller.getMapper().readValue(message, PrivateChatMessage.class);
+                final PrivateChat privateChat = privateChatMessage.getPrivateChat();
 
-                final String newMessage = privateChatMessage.getPrivateChat().getContent();
-                final JLabel textComponent = new JLabel(newMessage);
+                if (privateChat.getFrom().equals(getSelectedUserId()) || controller.getUser().getId().equals(privateChat.getFrom())) {
+                    final String newMessage = privateChatMessage.getPrivateChat().getContent();
+                    final JLabel textComponent = new JLabel(newMessage);
 
-                messagesContainer.add(textComponent);
+                    messagesContainer.add(textComponent);
+                    messagesContainer.validate();
+                    messagesContainer.repaint();
+                }
+            } else if (message.startsWith("{\"responseAllChat")) {
+                final ResponseAllChatMessage responseAllChatMessage = this.controller.getMapper().readValue(message, ResponseAllChatMessage.class);
+                final List<ChatMessageDTO> messages = responseAllChatMessage.getResponseAllChat();
+
+                for (ChatMessageDTO newMessage : messages) {
+                    final JLabel textComponent = new JLabel(newMessage.getUser().getUsername() + " - " + newMessage.getContent());
+                    messagesContainer.add(textComponent);
+                }
+
                 messagesContainer.validate();
                 messagesContainer.repaint();
             }

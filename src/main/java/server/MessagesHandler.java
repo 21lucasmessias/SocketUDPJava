@@ -63,6 +63,8 @@ public class MessagesHandler extends Thread {
                     UserGateway.register(str, this);
                 } else if (str.startsWith("{\"privateChat")) { // {"privateChat":{"from":"123","to":"456","content":"ablublé"}}
                     HomeGateway.privateChat(str, this);
+                } else if (str.startsWith("{\"requestAllChat")) {
+                    HomeGateway.requestAll(str, this);
                 } else {
                     throw new Exception();
                 }

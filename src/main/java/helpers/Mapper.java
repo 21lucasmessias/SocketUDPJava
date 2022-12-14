@@ -8,6 +8,7 @@ public class Mapper {
 
     public Mapper() {
         this.mapper = new ObjectMapper();
+        this.mapper.findAndRegisterModules();
     }
 
     public ObjectMapper getMapper() {

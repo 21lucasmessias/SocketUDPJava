@@ -2,6 +2,7 @@ package server.database;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import dtos.ChatMessageDTO;
 import dtos.GroupDTO;
 import dtos.UserDTO;
 import helpers.Mapper;
@@ -16,16 +17,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 public class Database {
     final private Mapper mapper;
     final private HashMap<String, User> users = new HashMap<>();
     final private HashMap<String, Group> groups = new HashMap<>();
-    final private HashMap<String, ChatMessage> messages = new HashMap<>();
+    final private HashMap<String, List<ChatMessage>> messages = new HashMap<>();
 
     public Database() {
         this.mapper = new Mapper();
@@ -42,6 +40,7 @@ public class Database {
                 String data = myReader.nextLine();
                 final User user = this.mapper.getMapper().readValue(data, User.class);
                 this.users.put(user.getId(), user);
+                this.messages.put(user.getId(), new ArrayList<>());
             }
 
             myReader.close();
@@ -115,7 +114,19 @@ public class Database {
         return groups.values().stream().map(Group::toDto).toList();
     }
 
-    public HashMap<String, ChatMessage> getMessages() {
+    public HashMap<String, List<ChatMessage>> getHashMessages() {
         return messages;
+    }
+
+    public List<ChatMessageDTO> getPrivateHistoryMessages(String from, String to) {
+        final var listOfMessages = messages.get(from);
+        if (listOfMessages != null) {
+            return listOfMessages
+                    .stream().filter(chatMessage -> chatMessage.getUser().getId().equals(to))
+                    .map(ChatMessage::toDto)
+                    .toList();
+        }
+
+        return List.of();
     }
 }

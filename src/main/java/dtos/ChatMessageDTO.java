@@ -1,12 +1,10 @@
-package server.models;
+package dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import dtos.ChatMessageDTO;
-import dtos.UserDTO;
 
 import java.time.Instant;
 
-public class ChatMessage {
+public class ChatMessageDTO {
     @JsonProperty("createdAt")
     private Instant createdAt;
     @JsonProperty("user")
@@ -14,14 +12,13 @@ public class ChatMessage {
     @JsonProperty("content")
     private String content;
 
-    public ChatMessage() {
+    public ChatMessageDTO() {
     }
 
-    public ChatMessage(final UserDTO user, final String content) {
+    public ChatMessageDTO(final UserDTO user, final String content, final Instant createdAt) {
         this.user = user;
         this.content = content;
-
-        this.createdAt = Instant.now();
+        this.createdAt = createdAt;
     }
 
     public UserDTO getUser() {
@@ -46,9 +43,5 @@ public class ChatMessage {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public ChatMessageDTO toDto() {
-        return new ChatMessageDTO(this.user, this.content, this.createdAt);
     }
 }
