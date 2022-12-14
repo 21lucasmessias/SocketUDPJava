@@ -1,8 +1,9 @@
 package messages.register;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import messages.Message;
 
-public class RegisterMessage {
+public class RegisterMessage implements Message {
     @JsonProperty("register")
     private Register register;
 

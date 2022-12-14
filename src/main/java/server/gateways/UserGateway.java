@@ -1,73 +1,91 @@
 package server.gateways;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import helpers.Mapper;
-import messages.home.HomeGroupsMessage;
-import messages.home.HomeUsersMessage;
+import dtos.UserDTO;
+import messages.home.*;
 import messages.login.Login;
 import messages.login.LoginMessage;
 import messages.login.SetUser;
 import messages.login.SetUserMessage;
 import messages.register.Register;
 import messages.register.RegisterMessage;
-import server.database.Database;
+import server.MessagesHandler;
 import server.models.User;
 
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.util.Objects;
 import java.util.Optional;
 
 public class UserGateway {
-    public static void login(String message, Mapper mapper, Database database, PrintWriter os, Socket socket) throws JsonProcessingException {
-        final Login login = mapper.getMapper().readValue(message, LoginMessage.class).getLogin();
-        final Optional<User> user = database.login(login.getUsername(), login.getPassword());
+    public static void login(String message, MessagesHandler handler) throws JsonProcessingException {
+        final Login login = handler.mapper.getMapper().readValue(message, LoginMessage.class).getLogin();
+        final Optional<User> user = handler.database.login(login.getUsername(), login.getPassword());
 
         if (user.isPresent()) {
-            user.get().setWriter(os);
-            user.get().setSocket(socket);
+            user.get().setWriter(handler.os);
+            user.get().setSocket(handler.socket);
 
-            os.println(mapper.getMapper().writeValueAsString(new SetUserMessage(new SetUser(user.get().getUsername(), user.get().getId()))));
-            os.flush();
+            handler.broadcast(new NewConnectionMessage(handler.database.getOnlineUsersList()));
 
-            os.println("welcome " + user.get().getUsername());
-            os.flush();
+            handler.os.println(handler.mapper.getMapper().writeValueAsString(new SetUserMessage(new SetUser(user.get().getUsername(), user.get().getId()))));
+            handler.os.flush();
 
-            final HomeUsersMessage homeUsersMessage = new HomeUsersMessage(database.getUsersList());
-            os.println(mapper.getMapper().writeValueAsString(homeUsersMessage));
+            handler.os.println("welcome " + user.get().getUsername());
+            handler.os.flush();
 
-            os.flush();
+            final HomeUsersMessage homeUsersMessage = new HomeUsersMessage(handler.database.getOnlineUsersList());
+            handler.os.println(handler.mapper.getMapper().writeValueAsString(homeUsersMessage));
+            handler.os.flush();
 
-            final HomeGroupsMessage homeGroupsMessage = new HomeGroupsMessage(database.getGroups());
-            os.println(mapper.getMapper().writeValueAsString(homeGroupsMessage));
+            final HomeGroupsMessage homeGroupsMessage = new HomeGroupsMessage(handler.database.getGroups());
+            handler.os.println(handler.mapper.getMapper().writeValueAsString(homeGroupsMessage));
+            handler.os.flush();
+
+            handler.user = user.get();
         } else {
-            os.println("user-not-found");
+            handler.os.println("user-not-found");
+            handler.os.flush();
         }
     }
 
-    public static void register(String message, Mapper mapper, Database database, PrintWriter os, Socket socket) throws JsonProcessingException {
-        final Register register = mapper.getMapper().readValue(message, RegisterMessage.class).getRegister();
-        final boolean success = database.register(register.getUsername(), register.getPassword());
-        final Optional<User> user = database.login(register.getUsername(), register.getPassword());
+    public static void register(String message, MessagesHandler handler) throws JsonProcessingException {
+        final Register register = handler.mapper.getMapper().readValue(message, RegisterMessage.class).getRegister();
+        final boolean success = handler.database.register(register.getUsername(), register.getPassword());
+        final Optional<User> user = handler.database.login(register.getUsername(), register.getPassword());
 
         if (success && user.isPresent()) {
-            user.get().setWriter(os);
-            user.get().setSocket(socket);
+            user.get().setWriter(handler.os);
+            user.get().setSocket(handler.socket);
 
-            os.println(mapper.getMapper().writeValueAsString(new SetUserMessage(new SetUser(user.get().getUsername(), user.get().getId()))));
-            os.flush();
+            handler.broadcast(new NewConnectionMessage(handler.database.getOnlineUsersList()));
 
-            os.println("welcome " + user.get().getUsername());
-            os.flush();
+            handler.os.println(handler.mapper.getMapper().writeValueAsString(new SetUserMessage(new SetUser(user.get().getUsername(), user.get().getId()))));
+            handler.os.flush();
 
-            final HomeUsersMessage homeUsersMessage = new HomeUsersMessage(database.getUsersList());
-            os.println(mapper.getMapper().writeValueAsString(homeUsersMessage));
+            handler.os.println("welcome " + user.get().getUsername());
+            handler.os.flush();
 
-            os.flush();
+            final HomeUsersMessage homeUsersMessage = new HomeUsersMessage(handler.database.getOnlineUsersList());
+            handler.os.println(handler.mapper.getMapper().writeValueAsString(homeUsersMessage));
+            handler.os.flush();
 
-            final HomeGroupsMessage homeGroupsMessage = new HomeGroupsMessage(database.getGroups());
-            os.println(mapper.getMapper().writeValueAsString(homeGroupsMessage));
+            final HomeGroupsMessage homeGroupsMessage = new HomeGroupsMessage(handler.database.getGroups());
+            handler.os.println(handler.mapper.getMapper().writeValueAsString(homeGroupsMessage));
+            handler.os.flush();
         } else {
-            os.println("invalid-user");
+            handler.os.println("invalid-user");
+            handler.os.flush();
+        }
+    }
+
+    public static void disconnect(MessagesHandler handler) {
+        if (handler.user != null) {
+            handler.broadcast(
+                    new DisconnectMessage(
+                            handler.database.getOnlineUsersList()
+                                    .stream().filter(userDTO -> !Objects.equals(userDTO.getId(), handler.user.getId()))
+                                    .toList()
+                    )
+            );
         }
     }
 }

@@ -23,10 +23,8 @@ import java.util.Scanner;
 
 public class Database {
     final private Mapper mapper;
-
     final private HashMap<String, User> users = new HashMap<>();
     final private HashMap<String, Group> groups = new HashMap<>();
-
     final private HashMap<String, ChatMessage> messages = new HashMap<>();
 
     public Database() {
@@ -109,8 +107,8 @@ public class Database {
         return this.users;
     }
 
-    public List<UserDTO> getUsersList() {
-        return users.values().stream().map(User::toDto).toList();
+    public List<UserDTO> getOnlineUsersList() {
+        return users.values().stream().filter(user -> user.getSocket() != null && !user.getSocket().isClosed()).map(User::toDto).toList();
     }
 
     public List<GroupDTO> getGroups() {

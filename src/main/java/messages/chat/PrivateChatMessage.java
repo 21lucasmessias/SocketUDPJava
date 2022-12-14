@@ -1,8 +1,9 @@
 package messages.chat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import messages.Message;
 
-public class PrivateChatMessage {
+public class PrivateChatMessage implements Message {
     @JsonProperty("privateChat")
     private PrivateChat privateChat;
 

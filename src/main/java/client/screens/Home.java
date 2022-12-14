@@ -1,14 +1,15 @@
 package client.screens;
 
 import client.Controller;
-import client.models.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dtos.GroupDTO;
 import dtos.UserDTO;
 import messages.chat.PrivateChat;
 import messages.chat.PrivateChatMessage;
+import messages.home.DisconnectMessage;
 import messages.home.HomeGroupsMessage;
 import messages.home.HomeUsersMessage;
+import messages.home.NewConnectionMessage;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -17,17 +18,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Home extends Screen {
     private final Controller controller;
     private final GridLayout messagesLayout;
     private JPanel container;
-    private JList<String> listOfUsers;
-    private JList<String> listOfGroups;
     private JTextField chatField;
     private JButton sendButton;
     private JPanel messagesContainer;
     private JLabel targetLabel;
+    private JList<String> listOfUsers;
+    private JList<String> listOfGroups;
     private String selectedUserId;
 
     public Home(Controller controller) {
@@ -36,6 +38,7 @@ public class Home extends Screen {
         this.setContentPane(this.container);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1080, 720);
+        this.setTitle(this.controller.getUser().getUsername());
 
         this.messagesLayout = new GridLayout(0, 1, 0, 4);
         this.messagesContainer.setLayout(this.messagesLayout);
@@ -65,15 +68,6 @@ public class Home extends Screen {
     }
 
     private void sendMessage() throws JsonProcessingException {
-        final String message = this.controller.getUser().getUsername() + " - " + chatField.getText();
-        chatField.setText("");
-
-        final JLabel textComponent = new JLabel(message);
-
-        messagesContainer.add(textComponent);
-        messagesContainer.validate();
-        messagesContainer.repaint();
-
         this.controller.getWriter().println(this.controller.getMapper().writeValueAsString(
                 new PrivateChatMessage(
                         new PrivateChat(
@@ -83,15 +77,18 @@ public class Home extends Screen {
                         )
                 )
         ));
+
         this.controller.getWriter().flush();
+
+        chatField.setText("");
     }
 
     @Override
     public void handleMessage(String message) {
-        if (message.startsWith("{\"homeUsersMessage")) {
-            try {
+        try {
+            if (message.startsWith("{\"homeUsers")) {
                 final HomeUsersMessage homeUsersMessage = this.controller.getMapper().readValue(message, HomeUsersMessage.class);
-                final java.util.List<String> users = new ArrayList<>(java.util.List.of());
+                final List<String> users = new ArrayList<>(List.of());
 
                 for (UserDTO user : homeUsersMessage.getHomeUsersMessage()) {
                     if (!user.getId().equals(this.controller.getUser().getId())) {
@@ -99,23 +96,50 @@ public class Home extends Screen {
                     }
                 }
 
-                listOfUsers.setListData(users.toArray(String[]::new));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (message.startsWith("{\"homeGroupsMessage")) {
-            try {
+                this.listOfUsers.setListData(users.toArray(String[]::new));
+            } else if (message.startsWith("{\"homeGroups")) {
                 final HomeGroupsMessage homeGroupsMessage = this.controller.getMapper().readValue(message, HomeGroupsMessage.class);
-                final java.util.List<String> groups = new ArrayList<>(java.util.List.of());
+                final List<String> groups = new ArrayList<>(List.of());
 
                 for (GroupDTO group : homeGroupsMessage.getHomeGroupsMessage()) {
                     groups.add(group.getId() + " - " + group.getName());
                 }
 
                 listOfGroups.setListData(groups.toArray(String[]::new));
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else if (message.startsWith("{\"newConnection")) {
+                final NewConnectionMessage newConnectionMessage = this.controller.getMapper().readValue(message, NewConnectionMessage.class);
+                final List<String> users = new ArrayList<>(List.of());
+
+                for (UserDTO user : newConnectionMessage.getNewConnectionMessage()) {
+                    if (!user.getId().equals(this.controller.getUser().getId())) {
+                        users.add(user.getId() + " - " + user.getUsername());
+                    }
+                }
+
+                this.listOfUsers.setListData(users.toArray(String[]::new));
+            } else if (message.startsWith("{\"disconnect")) {
+                final DisconnectMessage newConnectionMessage = this.controller.getMapper().readValue(message, DisconnectMessage.class);
+                final List<String> users = new ArrayList<>(List.of());
+
+                for (UserDTO user : newConnectionMessage.getDisconnectMessage()) {
+                    if (!user.getId().equals(this.controller.getUser().getId())) {
+                        users.add(user.getId() + " - " + user.getUsername());
+                    }
+                }
+
+                this.listOfUsers.setListData(users.toArray(String[]::new));
+            } else if (message.startsWith("{\"privateChat")) {
+                final PrivateChatMessage privateChatMessage = this.controller.getMapper().readValue(message, PrivateChatMessage.class);
+
+                final String newMessage = privateChatMessage.getPrivateChat().getContent();
+                final JLabel textComponent = new JLabel(newMessage);
+
+                messagesContainer.add(textComponent);
+                messagesContainer.validate();
+                messagesContainer.repaint();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

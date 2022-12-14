@@ -1,19 +1,23 @@
 package server;
 
 import helpers.Mapper;
+import messages.Message;
 import server.database.Database;
 import server.gateways.HomeGateway;
 import server.gateways.UserGateway;
+import server.models.User;
 
 import java.io.*;
 import java.net.Socket;
 
 public class MessagesHandler extends Thread {
-    private final Socket socket;
-    private final Database database;
-    private final Mapper mapper;
-    private BufferedReader is;
-    private PrintWriter os;
+    public final Socket socket;
+    public final Database database;
+    public final Mapper mapper;
+    public BufferedReader is;
+    public PrintWriter os;
+
+    public User user;
 
     public MessagesHandler(Socket s, Facade dependencyInjector) {
         this.socket = s;
@@ -26,9 +30,21 @@ public class MessagesHandler extends Thread {
             start();
 
             System.out.println("Nova connexão: " + socket);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void broadcast(Message message) {
+        database.getOnlineUsersList().forEach(u -> {
+            try {
+                final User _user = database.getUsers().get(u.getId());
+                _user.getWriter().println(mapper.getMapper().writeValueAsString(message));
+                _user.getWriter().flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public void run() {
@@ -42,18 +58,18 @@ public class MessagesHandler extends Thread {
                 System.out.println(str);
 
                 if (str.startsWith("{\"login")) { // {"login":{"username":"lucas","password":"123456"}}
-                    UserGateway.login(str, mapper, database, os, socket);
+                    UserGateway.login(str, this);
                 } else if (str.startsWith("{\"register")) { // {"register":{"username":"lucas","password":"123456"}}
-                    UserGateway.register(str, mapper, database, os, socket);
+                    UserGateway.register(str, this);
                 } else if (str.startsWith("{\"privateChat")) { // {"privateChat":{"from":"123","to":"456","content":"ablublé"}}
-                    HomeGateway.privateChat(str, mapper, database);
+                    HomeGateway.privateChat(str, this);
                 } else {
                     throw new Exception();
                 }
-
-                os.flush();
                 str = is.readLine();
             }
+
+            UserGateway.disconnect(this);
 
             os.println("end");
             os.flush();
@@ -62,6 +78,10 @@ public class MessagesHandler extends Thread {
             os.close();
             socket.close();
         } catch (Exception e) {
+            e.printStackTrace();
+
+            UserGateway.disconnect(this);
+
             os.println("end");
             os.flush();
 
@@ -69,8 +89,8 @@ public class MessagesHandler extends Thread {
                 is.close();
                 os.close();
                 socket.close();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
     }

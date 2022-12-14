@@ -1,8 +1,9 @@
 package messages.login;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import messages.Message;
 
-public class LoginMessage {
+public class LoginMessage implements Message {
     @JsonProperty("login")
     private Login login;
 

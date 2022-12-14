@@ -2,11 +2,12 @@ package messages.home;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dtos.UserDTO;
+import messages.Message;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeUsersMessage {
+public class HomeUsersMessage implements Message {
     @JsonProperty("homeUsersMessage")
     private List<UserDTO> homeUsersMessage = new ArrayList<>(List.of());
 
