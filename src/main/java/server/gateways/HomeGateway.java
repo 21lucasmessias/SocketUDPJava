@@ -3,10 +3,7 @@ package server.gateways;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dtos.ChatMessageDTO;
 import messages.chat.*;
-import messages.chat.group.CreateGroup;
-import messages.chat.group.CreateGroupMessage;
-import messages.chat.group.CreateGroupResponse;
-import messages.chat.group.CreateGroupResponseMessage;
+import messages.chat.group.*;
 import messages.chat.individual.PrivateChat;
 import messages.chat.individual.PrivateChatMessage;
 import server.MessagesHandler;
@@ -43,6 +40,21 @@ public class HomeGateway {
         }
     }
 
+    public static void groupChat(String message, MessagesHandler handler) throws JsonProcessingException {
+        final GroupChatMessage groupChatMessage = handler.mapper.getMapper().readValue(message, GroupChatMessage.class);
+        final GroupChat groupChat = groupChatMessage.getGroupChat();
+
+        final User from = handler.database.getUsers().get(groupChat.getFrom());
+        final Group to = handler.database.getGroups().get(groupChat.getTo());
+
+        handler.database.getHashMessages().get(to.getId()).add(new ChatMessage(from.toDto(), groupChat.getContent()));
+
+        final String formattedMessage = from.getUsername() + " - " + groupChat.getContent();
+        groupChatMessage.getGroupChat().setContent(formattedMessage);
+
+        handler.broadcastToGroup(to.getId(), groupChatMessage);
+    }
+
     public static void requestAll(String message, MessagesHandler handler) throws JsonProcessingException {
         final RequestAllChatMessage requestAllChatMessage = handler.mapper.getMapper().readValue(message, RequestAllChatMessage.class);
         final RequestAllChat requestAllChat = requestAllChatMessage.getRequestAllChat();
@@ -76,11 +88,40 @@ public class HomeGateway {
         final Group newGroup = Group.from(createGroup.getName(), handler.user.toDto());
 
         handler.database.getGroups().put(newGroup.getId(), newGroup);
+        handler.database.getHashMessages().put(newGroup.getId(), new ArrayList<>(List.of()));
 
         handler.broadcast(new CreateGroupResponseMessage(new CreateGroupResponse(handler.database.getGroupsList())));
     }
 
-    public static void joinGroup(String message, MessagesHandler handler) {
+    public static void joinGroup(String message, MessagesHandler handler) throws JsonProcessingException {
+        final JoinGroupMessage joinGroupMessage = handler.mapper.getMapper().readValue(message, JoinGroupMessage.class);
+        final JoinGroup joinGroup = joinGroupMessage.getJoinGroup();
 
+        final String userId = joinGroup.getUserId();
+        final String groupId = joinGroup.getGroupId();
+
+        final User user = handler.database.getUsers().get(userId);
+        final Group group = handler.database.getGroups().get(groupId);
+        if (group != null) {
+            if (group.getUsers().stream().noneMatch(userDTO -> userDTO.getId().equals(user.getId()))) {
+                group.getUsers().add(user.toDto());
+            }
+        }
+
+        final List<ChatMessageDTO> messagesGroup = handler.database.getGroupHistoryMessages(groupId);
+
+        messagesGroup.sort((o1, o2) -> {
+            if (o1.getCreatedAt().isBefore(o2.getCreatedAt())) {
+                return -1;
+            }
+            if (o1.getCreatedAt().equals(o2.getCreatedAt())) {
+                return 0;
+            }
+            return 1;
+        });
+
+        handler.os.println(handler.mapper.getMapper().writeValueAsString(new ResponseJoinGroupMessage(messagesGroup)));
+        handler.os.flush();
     }
+
 }

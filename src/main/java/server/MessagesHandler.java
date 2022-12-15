@@ -47,6 +47,18 @@ public class MessagesHandler extends Thread {
         });
     }
 
+    public void broadcastToGroup(String groupId, Message message) {
+        database.getOnlineUsersListOnGroup(groupId).forEach(u -> {
+            try {
+                final User _user = database.getUsers().get(u.getId());
+                _user.getWriter().println(mapper.getMapper().writeValueAsString(message));
+                _user.getWriter().flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     public void run() {
         try {
             os.println("connected");
@@ -63,7 +75,9 @@ public class MessagesHandler extends Thread {
                     UserGateway.register(str, this);
                 } else if (str.startsWith("{\"privateChat")) { // {"privateChat":{"from":"123","to":"456","content":"ablublé"}}
                     HomeGateway.privateChat(str, this);
-                } else if (str.startsWith("{\"requestAllChat")) {
+                } else if (str.startsWith("{\"groupChat")) { // {"groupChat":{"from":"123","to":"456","content":"ablublé"}}
+                    HomeGateway.groupChat(str, this);
+                }  else if (str.startsWith("{\"requestAllChat")) {
                     HomeGateway.requestAll(str, this);
                 }  else if (str.startsWith("{\"createGroup")) {
                     HomeGateway.createGroup(str, this);

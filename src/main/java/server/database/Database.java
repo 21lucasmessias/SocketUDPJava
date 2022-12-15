@@ -122,12 +122,45 @@ public class Database {
         return messages;
     }
 
-    public List<ChatMessageDTO> getPrivateHistoryMessages(String from, String to) {
+    public ArrayList<ChatMessageDTO> getPrivateHistoryMessages(String from, String to) {
         final var listOfMessages = messages.get(from);
         if (listOfMessages != null) {
-            return listOfMessages
+            return new ArrayList<>(listOfMessages
                     .stream().filter(chatMessage -> chatMessage.getUser().getId().equals(to))
                     .map(ChatMessage::toDto)
+                    .toList()
+            );
+        }
+
+        return new ArrayList<>(List.of());
+    }
+
+    public ArrayList<ChatMessageDTO> getGroupHistoryMessages(String groupId) {
+        final var listOfMessages = messages.get(groupId);
+
+        if (listOfMessages != null) {
+            return new ArrayList<>(
+                    listOfMessages.stream()
+                            .map(ChatMessage::toDto)
+                            .toList()
+            );
+        }
+
+        return new ArrayList<>(List.of());
+    }
+
+    public List<UserDTO> getOnlineUsersListOnGroup(String groupId) {
+        final Group group = groups.get(groupId);
+
+        if (group != null) {
+            return group.getUsers()
+                    .stream().filter(dto -> {
+                        final User user = users.get(dto.getId());
+                        if (user != null) {
+                            return user.getSocket() != null && !user.getSocket().isClosed();
+                        }
+                        return false;
+                    })
                     .toList();
         }
 

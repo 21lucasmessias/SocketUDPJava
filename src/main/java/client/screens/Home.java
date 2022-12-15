@@ -6,9 +6,7 @@ import dtos.ChatMessageDTO;
 import dtos.GroupDTO;
 import dtos.UserDTO;
 import messages.chat.*;
-import messages.chat.group.CreateGroup;
-import messages.chat.group.CreateGroupMessage;
-import messages.chat.group.CreateGroupResponseMessage;
+import messages.chat.group.*;
 import messages.chat.individual.PrivateChat;
 import messages.chat.individual.PrivateChatMessage;
 import messages.login.DisconnectMessage;
@@ -17,11 +15,13 @@ import messages.home.HomeUsersMessage;
 import messages.login.NewConnectionMessage;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +36,8 @@ public class Home extends Screen {
     private JList<String> listOfGroups;
     private JTextField newGroupInput;
     private JButton createGroupButton;
-    private String selectedUserId;
+    private String selectedChatId;
+    private Boolean isGroup = false;
 
     public Home(Controller controller) {
         this.controller = controller;
@@ -50,78 +51,125 @@ public class Home extends Screen {
         this.messagesContainer.setLayout(messagesLayout);
 
         sendButton.addActionListener(e -> {
-            if (!targetLabel.getText().equals("Select someone to chat")) {
-                try {
-                    sendMessage();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        listOfUsers.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                sendPrivateMessage();
-            }
+            sendMessage();
         });
 
         createGroupButton.addActionListener(e -> {
-            if (newGroupInput.getText().isBlank() || newGroupInput.getText().isEmpty()) {
-                return;
-            }
+            createGroup();
+        });
 
-            try {
-                createGroup();
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        listOfGroups.addListSelectionListener(evt -> {
+            if (evt.getValueIsAdjusting()) {
+                openGroupChat();
+            }
+        });
+
+        listOfUsers.addListSelectionListener(e -> {
+            if (e.getValueIsAdjusting()) {
+                openPrivateChat();
             }
         });
     }
 
-    private void createGroup() throws JsonProcessingException {
-        final CreateGroupMessage createGroupMessage = new CreateGroupMessage(new CreateGroup(newGroupInput.getText()));
+    private void createGroup() {
+        if (newGroupInput.getText().isBlank() || newGroupInput.getText().isEmpty()) {
+            return;
+        }
 
-        this.controller.getWriter().println(this.controller.getMapper().writeValueAsString(createGroupMessage));
-        this.controller.getWriter().flush();
+        try {
+            final CreateGroupMessage createGroupMessage = new CreateGroupMessage(new CreateGroup(newGroupInput.getText()));
+            this.controller.getWriter().println(this.controller.getMapper().writeValueAsString(createGroupMessage));
+            this.controller.getWriter().flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         newGroupInput.setText("");
     }
 
-    private void sendPrivateMessage() {
+    private void openPrivateChat() {
         final String selectedOption = listOfUsers.getSelectedValue();
-        final String targetId = selectedOption.split(" - ")[0];
-        final String targetName = selectedOption.split(" - ")[1];
 
-        final RequestAllChat requestAllChat = new RequestAllChat(controller.getUser().getId(), targetId);
-        final RequestAllChatMessage requestAllChatMessage = new RequestAllChatMessage(requestAllChat);
+        if (selectedOption != null) {
+            listOfGroups.clearSelection();
 
-        try {
-            controller.getWriter().println(controller.getMapper().writeValueAsString(requestAllChatMessage));
-        } catch (JsonProcessingException ex) {
-            throw new RuntimeException(ex);
+            final String targetId = selectedOption.split(" - ")[0];
+            final String targetName = selectedOption.split(" - ")[1];
+
+            final RequestAllChat requestAllChat = new RequestAllChat(controller.getUser().getId(), targetId);
+            final RequestAllChatMessage requestAllChatMessage = new RequestAllChatMessage(requestAllChat);
+
+            try {
+                controller.getWriter().println(controller.getMapper().writeValueAsString(requestAllChatMessage));
+            } catch (JsonProcessingException ex) {
+                throw new RuntimeException(ex);
+            }
+            controller.getWriter().flush();
+
+            messagesContainer.removeAll();
+
+            targetLabel.setText(targetName);
+            setSelectedChatId(targetId);
+            setGroup(false);
         }
-        controller.getWriter().flush();
-
-        messagesContainer.removeAll();
-
-        targetLabel.setText(targetName);
-        setSelectedUserId(targetId);
     }
 
-    private void sendMessage() throws JsonProcessingException {
-        this.controller.getWriter().println(this.controller.getMapper().writeValueAsString(
-                new PrivateChatMessage(
-                        new PrivateChat(
-                                this.controller.getUser().getId(),
-                                getSelectedUserId(),
-                                chatField.getText()
-                        )
-                )
-        ));
+    private void openGroupChat() {
+        final String selectedOption = listOfGroups.getSelectedValue();
 
-        this.controller.getWriter().flush();
+        if (selectedOption != null) {
+            listOfUsers.clearSelection();
+            final String groupId = selectedOption.split(" - ")[0];
+            final String groupName = selectedOption.split(" - ")[1];
+
+            final JoinGroup joinGroup = new JoinGroup(controller.getUser().getId(), groupId);
+            final JoinGroupMessage joinGroupMessage = new JoinGroupMessage(joinGroup);
+
+            try {
+                controller.getWriter().println(controller.getMapper().writeValueAsString(joinGroupMessage));
+            } catch (JsonProcessingException ex) {
+                throw new RuntimeException(ex);
+            }
+            controller.getWriter().flush();
+
+            messagesContainer.removeAll();
+
+            targetLabel.setText(groupName);
+            setSelectedChatId(groupId);
+            setGroup(true);
+        }
+    }
+
+    private void sendMessage() {
+        if (!targetLabel.getText().equals("Select someone to chat")) {
+            try {
+                if (isGroup) {
+                    this.controller.getWriter().println(this.controller.getMapper().writeValueAsString(
+                            new GroupChatMessage(
+                                    new GroupChat(
+                                            this.controller.getUser().getId(),
+                                            getSelectedChatId(),
+                                            chatField.getText()
+                                    )
+                            )
+                    ));
+                } else {
+                    this.controller.getWriter().println(this.controller.getMapper().writeValueAsString(
+                            new PrivateChatMessage(
+                                    new PrivateChat(
+                                            this.controller.getUser().getId(),
+                                            getSelectedChatId(),
+                                            chatField.getText()
+                                    )
+                            )
+                    ));
+                }
+
+                this.controller.getWriter().flush();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
 
         chatField.setText("");
     }
@@ -175,8 +223,20 @@ public class Home extends Screen {
                 final PrivateChatMessage privateChatMessage = this.controller.getMapper().readValue(message, PrivateChatMessage.class);
                 final PrivateChat privateChat = privateChatMessage.getPrivateChat();
 
-                if (privateChat.getFrom().equals(getSelectedUserId()) || controller.getUser().getId().equals(privateChat.getFrom())) {
+                if (privateChat.getFrom().equals(getSelectedChatId()) || controller.getUser().getId().equals(privateChat.getFrom())) {
                     final String newMessage = privateChatMessage.getPrivateChat().getContent();
+                    final JLabel textComponent = new JLabel(newMessage);
+
+                    messagesContainer.add(textComponent);
+                    messagesContainer.validate();
+                    messagesContainer.repaint();
+                }
+            } else if (message.startsWith("{\"groupChat")) {
+                final GroupChatMessage groupChatMessage = this.controller.getMapper().readValue(message, GroupChatMessage.class);
+                final GroupChat groupChat = groupChatMessage.getGroupChat();
+
+                if (groupChat.getTo().equals(getSelectedChatId())) {
+                    final String newMessage = groupChatMessage.getGroupChat().getContent();
                     final JLabel textComponent = new JLabel(newMessage);
 
                     messagesContainer.add(textComponent);
@@ -203,17 +263,32 @@ public class Home extends Screen {
                 }
 
                 listOfGroups.setListData(groups.toArray(String[]::new));
+            } else if (message.startsWith("{\"responseJoinGroup")) {
+                final ResponseJoinGroupMessage responseJoinGroupMessage = this.controller.getMapper().readValue(message, ResponseJoinGroupMessage.class);
+                final List<ChatMessageDTO> messages = responseJoinGroupMessage.getResponseJoinGroupMessage();
+
+                for (ChatMessageDTO newMessage : messages) {
+                    final JLabel textComponent = new JLabel(newMessage.getUser().getUsername() + " - " + newMessage.getContent());
+                    messagesContainer.add(textComponent);
+                }
+
+                messagesContainer.validate();
+                messagesContainer.repaint();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public String getSelectedUserId() {
-        return selectedUserId;
+    public String getSelectedChatId() {
+        return selectedChatId;
     }
 
-    public void setSelectedUserId(String selectedUserId) {
-        this.selectedUserId = selectedUserId;
+    public void setSelectedChatId(String selectedChatId) {
+        this.selectedChatId = selectedChatId;
+    }
+
+    public void setGroup(Boolean group) {
+        isGroup = group;
     }
 }
