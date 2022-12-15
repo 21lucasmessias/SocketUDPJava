@@ -35,7 +35,7 @@ public class MessagesHandler extends Thread {
         }
     }
 
-    public void broadcast(Message message) {
+    public synchronized void broadcast(Message message) {
         database.getOnlineUsersList().forEach(u -> {
             try {
                 final User _user = database.getUsers().get(u.getId());
@@ -47,7 +47,7 @@ public class MessagesHandler extends Thread {
         });
     }
 
-    public void broadcastToGroup(String groupId, Message message) {
+    public synchronized void broadcastToGroup(String groupId, Message message) {
         database.getOnlineUsersListOnGroup(groupId).forEach(u -> {
             try {
                 final User _user = database.getUsers().get(u.getId());

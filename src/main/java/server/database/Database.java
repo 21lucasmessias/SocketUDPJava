@@ -77,7 +77,7 @@ public class Database {
         }
     }
 
-    public synchronized Optional<User> login(String username, String password) {
+    public Optional<User> login(String username, String password) {
         return this.users.values().stream().filter(user -> {
             return user.getUsername().equals(username) && user.getPassword().equals(new DigestUtils("SHA3-256").digestAsHex(password));
         }).findFirst();
@@ -110,7 +110,7 @@ public class Database {
         return users.values().stream().filter(user -> user.getSocket() != null && !user.getSocket().isClosed()).map(User::toDto).toList();
     }
 
-    public List<GroupDTO> getGroupsList() {
+    public synchronized List<GroupDTO> getGroupsList() {
         return groups.values().stream().map(Group::toDto).toList();
     }
 

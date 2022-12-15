@@ -17,7 +17,7 @@ import java.util.List;
 
 public class HomeGateway {
 
-    public static void privateChat(String message, MessagesHandler handler) throws IOException {
+    public synchronized static void privateChat(String message, MessagesHandler handler) throws IOException {
         final PrivateChatMessage privateMessage = handler.mapper.getMapper().readValue(message, PrivateChatMessage.class);
         final PrivateChat privateChat = privateMessage.getPrivateChat();
 
@@ -40,7 +40,7 @@ public class HomeGateway {
         }
     }
 
-    public static void groupChat(String message, MessagesHandler handler) throws JsonProcessingException {
+    public synchronized static void groupChat(String message, MessagesHandler handler) throws JsonProcessingException {
         final GroupChatMessage groupChatMessage = handler.mapper.getMapper().readValue(message, GroupChatMessage.class);
         final GroupChat groupChat = groupChatMessage.getGroupChat();
 
@@ -55,7 +55,7 @@ public class HomeGateway {
         handler.broadcastToGroup(to.getId(), groupChatMessage);
     }
 
-    public static void requestAll(String message, MessagesHandler handler) throws JsonProcessingException {
+    public synchronized static void requestAll(String message, MessagesHandler handler) throws JsonProcessingException {
         final RequestAllChatMessage requestAllChatMessage = handler.mapper.getMapper().readValue(message, RequestAllChatMessage.class);
         final RequestAllChat requestAllChat = requestAllChatMessage.getRequestAllChat();
 
@@ -82,7 +82,7 @@ public class HomeGateway {
         handler.os.flush();
     }
 
-    public static void createGroup(String message, MessagesHandler handler) throws JsonProcessingException {
+    public synchronized static void createGroup(String message, MessagesHandler handler) throws JsonProcessingException {
         final CreateGroupMessage createGroupMessage = handler.mapper.getMapper().readValue(message, CreateGroupMessage.class);
         final CreateGroup createGroup = createGroupMessage.getCreateGroupMessage();
         final Group newGroup = Group.from(createGroup.getName(), handler.user.toDto());
@@ -93,7 +93,7 @@ public class HomeGateway {
         handler.broadcast(new CreateGroupResponseMessage(new CreateGroupResponse(handler.database.getGroupsList())));
     }
 
-    public static void joinGroup(String message, MessagesHandler handler) throws JsonProcessingException {
+    public synchronized static void joinGroup(String message, MessagesHandler handler) throws JsonProcessingException {
         final JoinGroupMessage joinGroupMessage = handler.mapper.getMapper().readValue(message, JoinGroupMessage.class);
         final JoinGroup joinGroup = joinGroupMessage.getJoinGroup();
 

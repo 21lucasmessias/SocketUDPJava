@@ -11,7 +11,7 @@ public class Facade {
         this.Database = new Database();
     }
 
-    public void newConnection(Socket s) {
+    public synchronized void newConnection(Socket s) {
         new MessagesHandler(s, this);
     }
 
