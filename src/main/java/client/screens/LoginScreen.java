@@ -33,23 +33,17 @@ public class LoginScreen extends Screen {
 
         this.controller = controller;
 
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String loginText = textField.getText();
-                String passwordText = String.valueOf(passwordField.getPassword());
+        loginButton.addActionListener(e -> {
+            String loginText = textField.getText();
+            String passwordText = String.valueOf(passwordField.getPassword());
 
-                login(loginText, passwordText);
-            }
+            login(loginText, passwordText);
         });
-        registerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String loginText = textField.getText();
-                String passwordText = String.valueOf(passwordField.getPassword());
+        registerButton.addActionListener(e -> {
+            String loginText = textField.getText();
+            String passwordText = String.valueOf(passwordField.getPassword());
 
-                register(loginText, passwordText);
-            }
+            register(loginText, passwordText);
         });
     }
 
