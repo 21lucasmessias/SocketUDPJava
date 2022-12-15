@@ -65,6 +65,10 @@ public class MessagesHandler extends Thread {
                     HomeGateway.privateChat(str, this);
                 } else if (str.startsWith("{\"requestAllChat")) {
                     HomeGateway.requestAll(str, this);
+                }  else if (str.startsWith("{\"createGroup")) {
+                    HomeGateway.createGroup(str, this);
+                }  else if (str.startsWith("{\"joinGroup")) {
+                    HomeGateway.joinGroup(str, this);
                 } else {
                     throw new Exception();
                 }

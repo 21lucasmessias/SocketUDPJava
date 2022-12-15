@@ -3,8 +3,15 @@ package server.gateways;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dtos.ChatMessageDTO;
 import messages.chat.*;
+import messages.chat.group.CreateGroup;
+import messages.chat.group.CreateGroupMessage;
+import messages.chat.group.CreateGroupResponse;
+import messages.chat.group.CreateGroupResponseMessage;
+import messages.chat.individual.PrivateChat;
+import messages.chat.individual.PrivateChatMessage;
 import server.MessagesHandler;
 import server.models.ChatMessage;
+import server.models.Group;
 import server.models.User;
 
 import java.io.IOException;
@@ -50,10 +57,10 @@ public class HomeGateway {
         messages.addAll(messagesFrom);
         messages.addAll(messagesTo);
         messages.sort((o1, o2) -> {
-            if(o1.getCreatedAt().isBefore(o2.getCreatedAt())){
+            if (o1.getCreatedAt().isBefore(o2.getCreatedAt())) {
                 return -1;
             }
-            if(o1.getCreatedAt().equals(o2.getCreatedAt())) {
+            if (o1.getCreatedAt().equals(o2.getCreatedAt())) {
                 return 0;
             }
             return 1;
@@ -61,5 +68,19 @@ public class HomeGateway {
 
         handler.os.println(handler.mapper.getMapper().writeValueAsString(new ResponseAllChatMessage(messages)));
         handler.os.flush();
+    }
+
+    public static void createGroup(String message, MessagesHandler handler) throws JsonProcessingException {
+        final CreateGroupMessage createGroupMessage = handler.mapper.getMapper().readValue(message, CreateGroupMessage.class);
+        final CreateGroup createGroup = createGroupMessage.getCreateGroupMessage();
+        final Group newGroup = Group.from(createGroup.getName(), handler.user.toDto());
+
+        handler.database.getGroups().put(newGroup.getId(), newGroup);
+
+        handler.broadcast(new CreateGroupResponseMessage(new CreateGroupResponse(handler.database.getGroupsList())));
+    }
+
+    public static void joinGroup(String message, MessagesHandler handler) {
+
     }
 }

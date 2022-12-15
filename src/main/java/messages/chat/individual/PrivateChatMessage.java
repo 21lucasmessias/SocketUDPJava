@@ -1,4 +1,4 @@
-package messages.chat;
+package messages.chat.individual;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import messages.Message;

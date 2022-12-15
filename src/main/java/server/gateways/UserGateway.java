@@ -1,17 +1,14 @@
 package server.gateways;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import dtos.UserDTO;
 import messages.home.*;
-import messages.login.Login;
-import messages.login.LoginMessage;
-import messages.login.SetUser;
-import messages.login.SetUserMessage;
+import messages.login.*;
 import messages.register.Register;
 import messages.register.RegisterMessage;
 import server.MessagesHandler;
 import server.models.User;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -36,7 +33,7 @@ public class UserGateway {
             handler.os.println(handler.mapper.getMapper().writeValueAsString(homeUsersMessage));
             handler.os.flush();
 
-            final HomeGroupsMessage homeGroupsMessage = new HomeGroupsMessage(handler.database.getGroups());
+            final HomeGroupsMessage homeGroupsMessage = new HomeGroupsMessage(handler.database.getGroupsList());
             handler.os.println(handler.mapper.getMapper().writeValueAsString(homeGroupsMessage));
             handler.os.flush();
 
@@ -56,6 +53,8 @@ public class UserGateway {
             user.get().setWriter(handler.os);
             user.get().setSocket(handler.socket);
 
+            handler.database.getHashMessages().put(user.get().getId(), new ArrayList<>());
+
             handler.broadcast(new NewConnectionMessage(handler.database.getOnlineUsersList()));
 
             handler.os.println(handler.mapper.getMapper().writeValueAsString(new SetUserMessage(new SetUser(user.get().getUsername(), user.get().getId()))));
@@ -68,7 +67,7 @@ public class UserGateway {
             handler.os.println(handler.mapper.getMapper().writeValueAsString(homeUsersMessage));
             handler.os.flush();
 
-            final HomeGroupsMessage homeGroupsMessage = new HomeGroupsMessage(handler.database.getGroups());
+            final HomeGroupsMessage homeGroupsMessage = new HomeGroupsMessage(handler.database.getGroupsList());
             handler.os.println(handler.mapper.getMapper().writeValueAsString(homeGroupsMessage));
             handler.os.flush();
         } else {

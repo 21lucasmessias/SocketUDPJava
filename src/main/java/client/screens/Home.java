@@ -6,15 +6,20 @@ import dtos.ChatMessageDTO;
 import dtos.GroupDTO;
 import dtos.UserDTO;
 import messages.chat.*;
-import messages.home.DisconnectMessage;
+import messages.chat.group.CreateGroup;
+import messages.chat.group.CreateGroupMessage;
+import messages.chat.group.CreateGroupResponseMessage;
+import messages.chat.individual.PrivateChat;
+import messages.chat.individual.PrivateChatMessage;
+import messages.login.DisconnectMessage;
 import messages.home.HomeGroupsMessage;
 import messages.home.HomeUsersMessage;
-import messages.home.NewConnectionMessage;
+import messages.login.NewConnectionMessage;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -29,6 +34,8 @@ public class Home extends Screen {
     private JLabel targetLabel;
     private JList<String> listOfUsers;
     private JList<String> listOfGroups;
+    private JTextField newGroupInput;
+    private JButton createGroupButton;
     private String selectedUserId;
 
     public Home(Controller controller) {
@@ -46,8 +53,8 @@ public class Home extends Screen {
             if (!targetLabel.getText().equals("Select someone to chat")) {
                 try {
                     sendMessage();
-                } catch (JsonProcessingException ex) {
-                    throw new RuntimeException(ex);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         });
@@ -56,27 +63,51 @@ public class Home extends Screen {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-
-                final String selectedOption = listOfUsers.getSelectedValue();
-                final String targetId = selectedOption.split(" - ")[0];
-                final String targetName = selectedOption.split(" - ")[1];
-
-                final RequestAllChat requestAllChat = new RequestAllChat(controller.getUser().getId(), targetId);
-                final RequestAllChatMessage requestAllChatMessage = new RequestAllChatMessage(requestAllChat);
-
-                try {
-                    controller.getWriter().println(controller.getMapper().writeValueAsString(requestAllChatMessage));
-                } catch (JsonProcessingException ex) {
-                    throw new RuntimeException(ex);
-                }
-                controller.getWriter().flush();
-
-                messagesContainer.removeAll();
-
-                targetLabel.setText(targetName);
-                setSelectedUserId(targetId);
+                sendPrivateMessage();
             }
         });
+
+        createGroupButton.addActionListener(e -> {
+            if (newGroupInput.getText().isBlank() || newGroupInput.getText().isEmpty()) {
+                return;
+            }
+
+            try {
+                createGroup();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+
+    private void createGroup() throws JsonProcessingException {
+        final CreateGroupMessage createGroupMessage = new CreateGroupMessage(new CreateGroup(newGroupInput.getText()));
+
+        this.controller.getWriter().println(this.controller.getMapper().writeValueAsString(createGroupMessage));
+        this.controller.getWriter().flush();
+
+        newGroupInput.setText("");
+    }
+
+    private void sendPrivateMessage() {
+        final String selectedOption = listOfUsers.getSelectedValue();
+        final String targetId = selectedOption.split(" - ")[0];
+        final String targetName = selectedOption.split(" - ")[1];
+
+        final RequestAllChat requestAllChat = new RequestAllChat(controller.getUser().getId(), targetId);
+        final RequestAllChatMessage requestAllChatMessage = new RequestAllChatMessage(requestAllChat);
+
+        try {
+            controller.getWriter().println(controller.getMapper().writeValueAsString(requestAllChatMessage));
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException(ex);
+        }
+        controller.getWriter().flush();
+
+        messagesContainer.removeAll();
+
+        targetLabel.setText(targetName);
+        setSelectedUserId(targetId);
     }
 
     private void sendMessage() throws JsonProcessingException {
@@ -163,6 +194,15 @@ public class Home extends Screen {
 
                 messagesContainer.validate();
                 messagesContainer.repaint();
+            } else if (message.startsWith("{\"createGroupResponse")) {
+                final CreateGroupResponseMessage createGroupResponseMessage = this.controller.getMapper().readValue(message, CreateGroupResponseMessage.class);
+                final List<String> groups = new ArrayList<>(List.of());
+
+                for (GroupDTO group : createGroupResponseMessage.getCreateGroupResponse().getGroups()) {
+                    groups.add(group.getId() + " - " + group.getName());
+                }
+
+                listOfGroups.setListData(groups.toArray(String[]::new));
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,3 +1,5 @@
+{"id":"8431e77d-6d45-40bc-b842-e87662d9d0d1","username":"teste2","password":"c138fbac7ee5d41c9f2379568e4db07720083c6afc7aea1f0bf7d5b9639ac31b"}
 {"id":"7443c480-6bf6-44b2-bb3e-678acbeea525","username":"ivan","password":"d7190eb194ff9494625514b6d178c87f99c5973e28c398969d2233f2960a573e"}
+{"id":"3408b1ad-6328-4e6f-8b6a-76c5f0419f41","username":"elvis","password":"d7190eb194ff9494625514b6d178c87f99c5973e28c398969d2233f2960a573e"}
 {"id":"138ef003-260a-4bf8-9ed6-f93eda80047c","username":"teste","password":"c8a2d029074842a6ef31d8d8b6e10714ee16d679f029986fce0bf2ac6a5ceac2"}
 {"id":"50da2170-c83e-4557-a797-7f4f568d84f9","username":"lucas","password":"d7190eb194ff9494625514b6d178c87f99c5973e28c398969d2233f2960a573e"}

@@ -1,4 +1,4 @@
-package messages.home;
+package messages.login;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dtos.UserDTO;

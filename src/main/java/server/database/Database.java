@@ -110,8 +110,12 @@ public class Database {
         return users.values().stream().filter(user -> user.getSocket() != null && !user.getSocket().isClosed()).map(User::toDto).toList();
     }
 
-    public List<GroupDTO> getGroups() {
+    public List<GroupDTO> getGroupsList() {
         return groups.values().stream().map(Group::toDto).toList();
+    }
+
+    public HashMap<String, Group> getGroups() {
+        return this.groups;
     }
 
     public HashMap<String, List<ChatMessage>> getHashMessages() {
